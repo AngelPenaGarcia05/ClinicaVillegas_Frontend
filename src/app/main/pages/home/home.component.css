@@ -1,0 +1,135 @@
+.btn-full-blue {
+    background-color: var(--blue-color);
+    color: var(--blue-color-light);
+    border-radius: 10px;
+    padding: 8px 20px;
+    font-size: 16px;
+}
+.btn-gradient {
+    background: linear-gradient(90deg, #002e5e, #4f6a7b);
+    border: none;
+    padding: 8px 20px;
+    font-size: 20px;
+    transition: all 0.2s ease;
+    &:hover{
+        transform: scale(1.1);
+    }
+}
+.text-blue-color-light{
+    color: var(--blue-color-light);
+}
+.text-blue-color{
+    color: var(--blue-color);
+}
+section{
+    background-color: var(--soft-color);
+}
+.subtitles div{
+    margin-inline: 10%;
+}
+.promotions img{
+    height: 300px;
+    width: 300px;
+}
+.box1 {
+    height: 260px;
+    width: 260px;
+    background-color: var(--blue-color);
+    img {
+        height: 100px;
+        width: 100px;
+    }
+}
+.box2 {
+    height: 250px;
+    width: 250px;
+    border: 1px solid var(--blue-color-light);
+    img {
+        height: 100px;
+        width: 100px;
+    }
+}
+.info {
+    padding: 60px 10%;
+    .icono{
+        background-color: #B7ECEA;
+        height: 80px;
+        min-width: 80px;
+    }
+    i{
+        font-size: 50px;
+    }
+}
+
+.info-image {
+    background-color: #01CFC9;
+    height: 500px;
+    min-width: 500px;
+    img {
+        height: 90%;
+        width: 90%;
+    }
+}
+
+.dentist-card {
+    background-color: white;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    .image-container{
+        background-color: var(--soft-color);
+    }
+    .image-container img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+    }
+    h3 {
+        font-size: 18px;
+        color: var(--blue-color);
+        margin-bottom: 5px;
+    }
+    p {
+        font-size: 16px;
+        color: var(--gray-color);
+    }
+}
+
+.opinions .opinion-card{
+    border: 1px solid var(--blue-color-light);
+    width: 385px;
+    height:250px;
+}
+.footer {
+    background-color: var(--blue-color-light);
+    .clinic, .contact, .about, .treatment{
+        width: 25%;
+    }
+    .social-networks>div{
+        width: 50px;
+        height: 50px;
+        &:first-child {
+            background-color: var(--blue-color);
+        }
+
+        &:nth-child(2) {
+            background-color: var(--soft-color);
+        }
+        &:nth-child(3) {
+            background-color: var(--blue-color);
+        }
+    }
+}
+
+@media (max-width: 768px){
+    .opinions .opinion-card{
+        width: 90%;
+    }
+    .info-image{
+        min-width: 90%;
+        height: 300px;
+        img{
+            height: 95%;
+            width: 95%;
+        }
+    }
+}

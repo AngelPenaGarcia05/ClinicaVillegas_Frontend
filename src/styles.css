@@ -1,1 +1,22 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+    margin: auto;
+    padding: auto;
+    background-color: #EAF7F9;
+}
+:root {
+    --header-height: 3rem;
+    --nav-width: 68px;
+    --soft-color-dark: #3e8b8b;
+    --blue-color: #0F2650;
+    --blue-color-light: #01CFC9;
+    --soft-color: #eff9f9;
+    --gray-color: #6f6f6f;
+    --body-font: sans-serif;
+    --normal-font-size: 1rem;
+    --z-fixed: 100
+}
+*,
+::before,
+::after {
+    box-sizing: border-box
+}

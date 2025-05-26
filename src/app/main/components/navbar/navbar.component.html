@@ -1,0 +1,29 @@
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img src="media/logo.jpg" alt="Logo Clínica Dental Villegas">
+            <div>
+                <h1>Clínica Dental Villegas</h1>
+            </div>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                @for (navItem of navItems(); track $index) {
+                    <li class="nav-item">
+                        <a class="nav-link" [href]="navItem.link">{{navItem.name}}</a>
+                    </li>
+                }
+            </ul>
+            @if (isLogged) {
+                <app-user-card [username]="user.name" [role]="user.role" [image]="user.image"></app-user-card>
+            }
+            <a href="iniciosesion" class="btn btn-login me-2">Iniciar sesión</a>
+            <a href="registro" class="btn btn-login">Registrarse</a>
+        </div>
+    </div>
+</nav>
