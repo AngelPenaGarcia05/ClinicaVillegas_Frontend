@@ -14,7 +14,7 @@ import { RouterOutlet } from '@angular/router';
 export class HomeLayoutComponent {
   navItems: NavItem[] = [
     {name: 'Inicio', link: 'home'},
-    {name: 'Tratamientos', link: 'tratamientos'},
+    {name: 'Tratamientos', link: 'home/treatments'},
     {name: 'Blog', link: 'blog'},
     {name: 'Contactos', link: '#contactos'},
   ]
