@@ -15,7 +15,7 @@ export class HomeLayoutComponent {
   navItems: NavItem[] = [
     {name: 'Inicio', link: 'home'},
     {name: 'Tratamientos', link: 'home/treatments'},
-    {name: 'Blog', link: 'blog'},
+    {name: 'Blog', link: 'home/blog'},
     {name: 'Contactos', link: '#contactos'},
   ]
 }
