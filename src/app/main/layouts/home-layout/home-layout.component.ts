@@ -6,7 +6,7 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-home-layout',
   imports: [NavbarComponent, RouterOutlet],
   template: `
-    <app-navbar [navItems]="navItems"></app-navbar>
+    <nav app-navbar [navItems]="navItems"></nav>
     <router-outlet></router-outlet>
   `,
   styleUrl: './home-layout.component.css'
