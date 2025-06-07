@@ -3,12 +3,19 @@ import { HomeLayoutComponent } from './main/layouts/home-layout/home-layout.comp
 import { HomeComponent } from './main/pages/home/home.component';
 import { TreatmentsComponent } from './main/pages/treatments/treatments.component';
 import { BlogComponent } from './main/pages/blog/blog.component';
+import { AuthLayoutComponent } from './auth/layouts/auth-layout/auth-layout.component';
+import { LoginComponent } from './auth/pages/login/login.component';
+import { RegisterComponent } from './auth/pages/register/register.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
+    {path: '', redirectTo: 'home', pathMatch: 'full' },
     {path: 'home', component: HomeLayoutComponent, title: 'Clinica Dental Villegas', children: [
         {path: '', component: HomeComponent, title: 'Clinica Dental Villegas'},
         {path: 'treatments', component: TreatmentsComponent, title: 'Tratamientos | Clinica Dental Villegas'},
         {path: 'blog', component: BlogComponent, title: 'Blog | Clinica Dental Villegas'}
+    ]},
+    {path: 'auth', component: AuthLayoutComponent, children: [
+        {path: 'login', component: LoginComponent, title: 'Inicio de sesión'},
+        {path: 'register', component: RegisterComponent, title: 'Registro'}
     ]}
 ];

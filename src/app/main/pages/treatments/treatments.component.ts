@@ -7,7 +7,7 @@ import { TreatmentCardComponent, TreatmentType } from "../../components/treatmen
   template: `
     <section class="container-fluid">
       @for (treatmentType of treatmentTypes; track $index) {
-        <app-treatment-card class="d-flex justify-content-center" [treatmentType]="treatmentType"></app-treatment-card>
+        <treatment-card class="d-flex justify-content-center" [treatmentType]="treatmentType"></treatment-card>
       }
     </section>
   `,

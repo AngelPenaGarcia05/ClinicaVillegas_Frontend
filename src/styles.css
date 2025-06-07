@@ -3,18 +3,21 @@ body {
     padding: auto;
     background-color: #EAF7F9;
 }
+
 :root {
     --header-height: 3rem;
     --nav-width: 68px;
     --soft-color-dark: #3e8b8b;
     --blue-color: #0F2650;
     --blue-color-light: #01CFC9;
+    --blue-color-soft: #21ACCD;
     --soft-color: #eff9f9;
     --gray-color: #6f6f6f;
     --body-font: sans-serif;
     --normal-font-size: 1rem;
-    --z-fixed: 100
+    --z-fixed: 100;
 }
+
 *,
 ::before,
 ::after {

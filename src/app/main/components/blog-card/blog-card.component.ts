@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 
 @Component({
-  selector: '.blog-card',
+  selector: 'blog-card',
   imports: [],
   template: `
     <div class="card h-100 shadow-sm">

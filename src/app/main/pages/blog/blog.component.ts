@@ -8,7 +8,7 @@ import { BlogCardComponent, CardInfo } from '../../components/blog-card/blog-car
     <div class="container-fluid p-3 p-md-4">
       <div class="row g-4">
         @for (card of cards; track $index) {
-          <div class="blog-card col-12 col-sm-6 col-lg-4" [cardInfo]="card"></div>
+          <blog-card class="col-12 col-sm-6 col-lg-4" [cardInfo]="card"></blog-card>
         }
       </div>
     </div>

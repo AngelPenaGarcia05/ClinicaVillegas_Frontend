@@ -35,6 +35,6 @@ export class HomeComponent {
   constructor(private router: Router){}
 
   redirectToBlog(){
-    this.router.navigate(['blog']);
+    this.router.navigate(['home/blog']);
   }
 }

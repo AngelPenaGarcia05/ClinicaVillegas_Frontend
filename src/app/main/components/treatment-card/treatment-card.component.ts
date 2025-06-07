@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 
 @Component({
-  selector: 'app-treatment-card',
+  selector: 'treatment-card',
   standalone: true,
   imports: [],
   template: `
