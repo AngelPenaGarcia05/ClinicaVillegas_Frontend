@@ -1,0 +1,12 @@
+.card-login{
+    background-color: #e2e2e2;
+    min-width: 500px;
+}
+.text-blue-color{
+    color: var(--blue-color);
+}
+@media (max-width: 768px){
+    .card-login{
+        min-width: auto;
+    }
+}

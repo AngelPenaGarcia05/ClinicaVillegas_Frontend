@@ -1,1 +1,64 @@
-<p>login works!</p>
+<div class="card card-login">
+    <div class="card-body p-4 p-md-5">
+        <div class="text-center mb-4">
+            <h1 class="mb-3 fw-semibold text-blue-color">Inicio de sesión</h1>
+            <hr>
+            <p class="text-muted text-blue-color">Bienvenido a la Clínica Dental Villegas</p>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+                <label for="email" class="form-label">Correo Electrónico</label>
+                <input type="email" id="email" class="form-control"
+                    [class.is-invalid]="emailControl?.invalid && (emailControl?.touched || emailControl?.dirty)"
+                    formControlName="email" placeholder="Ingresa tu correo electrónico">
+                @if (emailControl?.invalid && (emailControl?.touched || emailControl?.dirty)) {
+                <div class="invalid-feedback">
+                    @if (emailControl?.errors?.['required']) {
+                    <span>El campo es requerido</span>
+                    }
+                    @if (emailControl?.errors?.['email']) {
+                    <span>Ingresa un correo electrónico válido</span>
+                    }
+                </div>
+                }
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <div class="input-group has-validation">
+                    <input [type]="showPassword() ? 'text' : 'password'" id="password" class="form-control"
+                        [class.is-invalid]="passwordControl?.invalid && (passwordControl?.touched || passwordControl?.dirty)"
+                        formControlName="password" placeholder="Ingresa tu contraseña">
+                    <button type="button" class="btn btn-outline-secondary" (click)="switchPasswordVisibility()">
+                        <i [class]="showPassword() ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                    </button>
+                    @if (passwordControl?.invalid && (passwordControl?.touched || passwordControl?.dirty)) {
+                    <div class="invalid-feedback">
+                        @if (passwordControl?.errors?.['required']) {
+                        <span>El campo es requerido</span>
+                        }
+                        @if (passwordControl?.errors?.['minlength']) {
+                        <span>
+                            Min.
+                            {{passwordControl?.errors?.['minlength'].requiredLength}} caracteres
+                        </span>
+                        }
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 mb-3">
+                <button type="submit" class="btn btn-info" [disabled]="loginForm.invalid">
+                    Iniciar Sesión
+                </button>
+            </div>
+
+            <div class="text-center">
+                <a href="auth/register" class="me-3 text-info">¿Eres nuevo? Regístrate aquí</a>
+                <a href="home" class="text-info">Volver al inicio</a>
+            </div>
+        </form>
+    </div>
+</div>
