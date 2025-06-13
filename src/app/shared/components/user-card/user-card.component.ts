@@ -49,9 +49,13 @@ import { Component, input } from '@angular/core';
       color: #777;
       margin: 5px 0 0;
     }
-    @media (width <= 1024px){
+    @media (width <= 768px){
       .user-name, .user-role{
-          font-size: 12px;
+        font-size: 10px;
+      }
+      .profile-img {
+        width: 30px;
+        height: 30px;
       }
     }
 
