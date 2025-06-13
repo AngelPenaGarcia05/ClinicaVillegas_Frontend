@@ -6,6 +6,7 @@ import { BlogComponent } from './main/pages/blog/blog.component';
 import { AuthLayoutComponent } from './auth/layouts/auth-layout/auth-layout.component';
 import { LoginComponent } from './auth/pages/login/login.component';
 import { RegisterComponent } from './auth/pages/register/register.component';
+import { DashboardLayoutComponent } from './dashboard/layouts/dashboard-layout/dashboard-layout.component';
 
 export const routes: Routes = [
     {path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -17,5 +18,6 @@ export const routes: Routes = [
     {path: 'auth', component: AuthLayoutComponent, children: [
         {path: 'login', component: LoginComponent, title: 'Inicio de sesión'},
         {path: 'register', component: RegisterComponent, title: 'Registro'}
-    ]}
+    ]},
+    {path: 'dashboard', component: DashboardLayoutComponent, title: 'Dashboard'}
 ];
