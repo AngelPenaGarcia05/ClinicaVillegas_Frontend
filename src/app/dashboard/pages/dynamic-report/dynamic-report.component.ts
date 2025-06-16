@@ -1,110 +1,111 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, input, signal, viewChild } from '@angular/core';
+import { Component, signal, viewChild } from '@angular/core';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
-import { ChartComponent } from '../../components/chart/chart.component';
-import { CommonModule } from '@angular/common';
-import { CdkDrag, CdkDragDrop, CdkDropList, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { ReportService } from '../../services/report.service';
+import { ReporteRequestDTO } from '../../interfaces/reporte-request';
+import { ChartConfiguration } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-dynamic-report',
-  imports: [ModalComponent, ChartComponent, CommonModule, DragDropModule],
+  imports: [ModalComponent, BaseChartDirective, ReactiveFormsModule],
   templateUrl: './dynamic-report.component.html',
   styleUrl: './dynamic-report.component.css'
 })
 export class DynamicReportComponent {
+  tipoReporte = signal<string>('table');
+
   modalFormat = viewChild<ModalComponent>('modalFormat');
-  reportType = signal<string>('table');
+  modalConfig = viewChild<ModalComponent>('modalConfig');
 
-  allFields = ['Business Type', 'Category', 'Color', 'Country', 'Price', 'Quantity'];
-  filters: string[] = [];
-  columns: string[] = [];
-  rows: string[] = [];
-  values: string[] = [];
-
-  dropListIds = ['allFields', 'filters', 'columns', 'rows', 'values'];
-
-  drop(event: CdkDragDrop<string[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    }
-  }
-  setReportType(type: string) {
-    this.reportType.set(type);
-  }
-  currentChartType = signal<'bar' | 'line' | 'pie'>('bar');
-
-  // Computamos el próximo tipo para mostrar en el botón
-  get nextChartType(): string {
-    const types = ['bar', 'line', 'pie'];
-    const current = this.currentChartType();
-    return types[(types.indexOf(current) + 1) % types.length];
-  }
-
-  // Señal para los datos del gráfico
-  chartData = signal({
-    labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
-    datasets: [{
-      label: 'Ventas 2023',
-      data: [65, 59, 80, 81, 56],
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.7)',
-        'rgba(54, 162, 235, 0.7)',
-        'rgba(255, 206, 86, 0.7)',
-        'rgba(75, 192, 192, 0.7)',
-        'rgba(153, 102, 255, 0.7)'
-      ],
-      borderColor: [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 206, 86, 1)',
-        'rgba(75, 192, 192, 1)',
-        'rgba(153, 102, 255, 1)'
-      ],
-      borderWidth: 1
-    }]
-  });
-
-  // Opciones del gráfico (objeto estático)
-  chartOptions = {
+  reportData: any[] = [];
+  columnas: string[] = [];
+  chartData: ChartConfiguration<'bar'>['data'] = { labels: [], datasets: [] };
+  chartOptions: ChartConfiguration<'bar'>['options'] = {
     responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Gráfico de Ventas'
-      }
-    }
+    plugins: { legend: { display: true }, title: { display: true, text: 'Reporte Gráfico' } }
   };
 
-  // Cambiar el tipo de gráfico
-  toggleChartType() {
-    const types = ['bar', 'line', 'pie'] as const;
-    const currentIndex = types.indexOf(this.currentChartType());
-    const nextIndex = (currentIndex + 1) % types.length;
-    this.currentChartType.set(types[nextIndex]);
+  configForm: FormGroup;
+  camposDisponibles = ['dentista', 'sexo', 'estado', 'tratamiento', 'tipoTratamiento', 'tipoDocumento'];
+  camposNumericos = ['id', 'monto'];
+  agregaciones = ['count', 'sum', 'avg', 'max', 'min'];
+
+  constructor(private reporteService: ReportService, private fb: FormBuilder) {
+    this.configForm = this.fb.group({
+      filas: [['sexo']],
+      columnas: [],
+      valor: ['id'],
+      agregacion: ['count'],
+      fechaDesde: ['2024-01-01'],
+      fechaHasta: ['2024-12-31'],
+      filtros: this.fb.array([])
+    })
+    this.cargarReporte();
   }
 
-  // Actualizar datos con valores aleatorios
-  refreshData() {
-    const newData = this.chartData().datasets[0].data.map(() =>
-      Math.floor(Math.random() * 100)
-    );
+  get filtros() {
+    return this.configForm.get('filtros') as FormArray;
+  }
+  get filtrosFormGroups(): FormGroup[] {
+    return this.filtros.controls as FormGroup[];
+  }
 
-    this.chartData.set({
-      ...this.chartData(),
-      datasets: [{
-        ...this.chartData().datasets[0],
-        data: newData
-      }]
+  addFiltro() {
+    this.filtros.push(this.fb.group({
+      campo: [''],
+      valor: ['']
+    }));
+  }
+  removeFiltro(index: number) {
+    this.filtros.removeAt(index);
+  }
+  setTipoReporte(type: string) {
+    this.tipoReporte.set(type);
+  }
+
+
+  cargarReporte() {
+    const formValue = this.configForm.value;
+    console.log(formValue)
+
+    const dto: ReporteRequestDTO = {
+      filas: formValue.filas,
+      columnas: formValue.columnas,
+      valor: formValue.valor,
+      agregacion: formValue.agregacion,
+      fechaDesde: formValue.fechaDesde,
+      fechaHasta: formValue.fechaHasta,
+      filtros: {}
+    };
+    if (!dto.filtros) {
+      dto.filtros = {};
+    }
+    for (const f of formValue.filtros) {
+      if (f.campo && f.valor) {
+        dto.filtros[f.campo] = f.valor;
+      }
+    }
+
+
+    this.reporteService.generarReporte(dto).subscribe(data => {
+      this.reportData = data;
+      this.columnas = Object.keys(data[0] || {});
+
+      this.generarGrafico(data);
     });
+  }
+
+  generarGrafico(data: any[]) {
+    const etiquetas = data.map(row => row[this.columnas[0]]);
+    const series = this.columnas.slice(1).map(col => ({
+      label: col,
+      data: data.map(row => row[col] ?? 0),
+    }));
+
+    this.chartData = {
+      labels: etiquetas,
+      datasets: series
+    };
   }
 }

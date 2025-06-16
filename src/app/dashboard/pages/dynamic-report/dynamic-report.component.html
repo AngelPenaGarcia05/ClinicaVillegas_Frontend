@@ -17,34 +17,35 @@
             </div>
         </div>
     </div>
-    @if (reportType() == 'table') {
+    @if (tipoReporte() == 'table') {
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered table-hover mb-0">
                     <thead class="table-light">
-                        <tr>
-                            <th>Columna 1</th>
-                            <th>Columna 2</th>
-                            <th>Columna 3</th>
-                        </tr>
+                        @for (col of columnas; track $index) {
+                        <th>{{col}}</th>
+                        }
                     </thead>
                     <tbody>
+                        @for (row of reportData; track $index) {
                         <tr>
-                            <td colspan="3" class="text-center text-muted">No hay datos para mostrar.</td>
+                            @for (col of columnas; track $index) {
+                            <td>{{ row[col] }}</td>
+                            }
                         </tr>
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
     }
-    @if (reportType() == 'chart') {
+    @if (tipoReporte() == 'chart') {
     <div class="card">
         <div class="card-body">
-            <button (click)="toggleChartType()">Cambiar a {{ nextChartType }}</button>
-            <button (click)="refreshData()">Actualizar Datos</button>
-            <app-chart [type]="currentChartType()" [data]="chartData()" [options]="chartOptions" />
+            <canvas baseChart [data]="chartData" [type]="'bar'" [options]="chartOptions">
+            </canvas>
         </div>
     </div>
     }
@@ -57,10 +58,10 @@
     </div>
     <div modal-body>
         <div class="btn-group d-flex justify-content-center" role="group">
-            <button type="button" class="btn btn-outline-primary mb-2 mb-md-0" (click)="setReportType('table')">
+            <button type="button" class="btn btn-outline-primary mb-2 mb-md-0" (click)="setTipoReporte('table')">
                 <i class="bi bi-table"></i> Tabla
             </button>
-            <button type="button" class="btn btn-outline-secondary mb-2 mb-md-0" (click)="setReportType('chart')">
+            <button type="button" class="btn btn-outline-secondary mb-2 mb-md-0" (click)="setTipoReporte('chart')">
                 <i class="bi bi-bar-chart"></i> Gráfico
             </button>
         </div>
@@ -75,114 +76,69 @@
     </div>
 
     <div modal-body>
-        <div class="container-fluid">
-            <div class="row">
-                <!-- Sección lateral izquierda -->
-                <div class="col-md-4">
-                    <div>
-                        <div>
-                            <h5>Todos los Campos</h5>
-                        </div>
-                        <div>
-                            <div cdkDropList id="allFields" #allFieldsList="cdkDropList" [cdkDropListData]="allFields"
-                                [cdkDropListConnectedTo]="dropListIds" (cdkDropListDropped)="drop($event)">
-                                @for (item of allFields; track item) {
-                                <div cdkDrag>
-                                    {{ item }}
-                                </div>
-                                }
-                            </div>
-                        </div>
-                    </div>
+        <form [formGroup]="configForm">
+            <div class="mb-3">
+                <label>Filas</label>
+                <select class="form-select" multiple formControlName="filas">
+                    @for (campo of camposDisponibles; track $index) {
+                    <option [value]="campo">{{ campo }}</option>
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label>Columna</label>
+                <select class="form-select" multiple formControlName="columnas">
+                    @for (campo of camposDisponibles; track $index) {
+                    <option [value]="campo">{{ campo }}</option>
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label>Valor</label>
+                <select class="form-select" formControlName="valor">
+                    @for (campo of camposNumericos; track $index){
+                    <option [value]="campo">{{ campo }}</option>
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label>Agregación</label>
+                <select class="form-select" formControlName="agregacion">
+                    @for (tipo of agregaciones; track $index) {
+                    <option [value]="tipo">{{ tipo }}</option>
+                    }
+                </select>
+            </div>
+            <div class="mb-3 row">
+                <div class="col">
+                    <label>Fecha desde</label>
+                    <input type="date" class="form-control" formControlName="fechaDesde" />
                 </div>
-
-                <!-- Sección derecha con cuadrícula 2x2 -->
-                <div class="col-md-8">
-                    <div class="row">
-                        <!-- Filtros -->
-                        <div class="col-md-6">
-                            <div>
-                                <div>
-                                    <h6>Filtros</h6>
-                                </div>
-                                <div>
-                                    <div cdkDropList id="filters" #filtersList="cdkDropList" [cdkDropListData]="filters"
-                                        [cdkDropListConnectedTo]="dropListIds" (cdkDropListDropped)="drop($event)">
-                                        @for (item of filters; track item) {
-                                        <div cdkDrag>
-                                            {{ item }}
-                                        </div>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Columnas -->
-                        <div class="col-md-6">
-                            <div>
-                                <div>
-                                    <h6>Columnas</h6>
-                                </div>
-                                <div>
-                                    <div cdkDropList id="columns" #columnsList="cdkDropList" [cdkDropListData]="columns"
-                                        [cdkDropListConnectedTo]="dropListIds" (cdkDropListDropped)="drop($event)">
-                                        @for (item of columns; track item) {
-                                        <div cdkDrag>
-                                            {{ item }}
-                                        </div>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <!-- Filas -->
-                        <div class="col-md-6">
-                            <div>
-                                <div>
-                                    <h6>Filas</h6>
-                                </div>
-                                <div>
-                                    <div cdkDropList id="rows" #rowsList="cdkDropList" [cdkDropListData]="rows"
-                                        [cdkDropListConnectedTo]="dropListIds" (cdkDropListDropped)="drop($event)">
-                                        @for (item of rows; track item) {
-                                        <div cdkDrag>
-                                            {{ item }}
-                                        </div>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Valores -->
-                        <div class="col-md-6">
-                            <div>
-                                <div>
-                                    <h6>Valores</h6>
-                                </div>
-                                <div>
-                                    <div cdkDropList id="values" #valuesList="cdkDropList" [cdkDropListData]="values"
-                                        [cdkDropListConnectedTo]="dropListIds" (cdkDropListDropped)="drop($event)">
-                                        @for (item of values; track item) {
-                                        <div cdkDrag>
-                                            {{ item }}
-                                        </div>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col">
+                    <label>Fecha hasta</label>
+                    <input type="date" class="form-control" formControlName="fechaHasta" />
                 </div>
             </div>
-        </div>
+            <div class="mb-3">
+                <label>Filtros</label>
+                @for (filtro of filtrosFormGroups; track $index; let i = $index) {
+                    <div [formGroup]="filtro" class="d-flex gap-2 mb-2">
+                        <select class="form-select" formControlName="campo">
+                            @for (campo of camposDisponibles; track $index) {
+                                <option [value]="campo">{{ campo }}</option>
+                            }
+                        </select>
+                        <input type="text" class="form-control" placeholder="Valor" formControlName="valor" />
+                        <button type="button" class="btn btn-danger" (click)="removeFiltro(i)">×</button>
+                    </div>
+                }
+                <button type="button" class="btn btn-outline-primary" (click)="addFiltro()">Agregar filtro</button>
+            </div>
+        </form>
     </div>
 
     <div modal-footer>
         <button type="button" class="btn btn-secondary" (click)="modalConfig.close()">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="cargarReporte()">Aplicar</button>
     </div>
 </app-modal>

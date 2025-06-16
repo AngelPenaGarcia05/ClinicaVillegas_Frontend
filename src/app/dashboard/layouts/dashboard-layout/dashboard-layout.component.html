@@ -27,13 +27,13 @@
                 }
             </div>
         </div>
-        <a href="#" class="nav_link">
+        <a (click)="onLogout()" class="nav_link">
             <i class='bi bi-box-arrow-left nav_icon'></i>
             <span class="nav_name">SignOut</span>
         </a>
     </nav>
 </div>
 
-<div class="h-100 bg-light">
+<div class="bg-light container-content">
     <router-outlet></router-outlet>
 </div>

@@ -4,7 +4,7 @@ import { Usuario } from '../../shared/interfaces/usuario';
 import { HttpClient } from '@angular/common/http';
 import { LoginRequest } from '../interfaces/login-request';
 import { RegisterRequest } from '../interfaces/register-request';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
