@@ -91,7 +91,6 @@ export class DynamicReportComponent {
     this.reporteService.generarReporte(dto).subscribe(data => {
       this.reportData = data;
       this.columnas = Object.keys(data[0] || {});
-
       this.generarGrafico(data);
     });
   }

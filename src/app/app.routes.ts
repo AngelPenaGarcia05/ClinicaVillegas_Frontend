@@ -20,5 +20,7 @@ export const routes: Routes = [
         {path: 'login', component: LoginComponent, title: 'Inicio de sesión'},
         {path: 'register', component: RegisterComponent, title: 'Registro'}
     ]},
-    {path: 'dashboard', component: DynamicReportComponent}
+    {path: 'dashboard', component: DashboardLayoutComponent, children: [
+        {path: 'appointment', component: DynamicReportComponent, title: 'Reportes Dinámicos | Clinica Dental Villegas'}
+    ]}
 ];
