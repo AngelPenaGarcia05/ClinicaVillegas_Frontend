@@ -49,6 +49,13 @@ export class AuthService {
   getCurrentUser(): Usuario | null {
     return this.currentUserSubject.value;
   }
+  getNamesWithReniecService(documento: string): Observable<any>{
+    return this.http.get<any>(environment.apiUrl + '/reniec', {
+      params: {
+        dni: documento
+      }
+    });
+  }
 
   isLoggedIn(): boolean {
     return !!this.currentUserSubject.value;
