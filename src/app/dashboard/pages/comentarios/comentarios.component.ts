@@ -1,9 +1,12 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { ComentarioService } from '../../core/services/comentario.service';
-import { Comentario } from '../../core/interfaces/comentario';
-import { AuthService } from '../../core/services/auth.service';
+import { ComentarioService } from '../../services/comentario.service';
+import { AuthService } from '../../../auth/services/auth.service';
+import { Comentario } from '../../interfaces/comentario';
+import { map, Observable } from 'rxjs';
+import { Usuario } from '../../../shared/interfaces/usuario';
+
 
 @Component({
   selector: 'app-comentarios',
@@ -12,13 +15,14 @@ import { AuthService } from '../../core/services/auth.service';
   templateUrl: './comentarios.component.html',
   styleUrl: './comentarios.component.css'
 })
-export class ComentariosComponent implements OnInit {
+export class ComentariosComponent {
 
   comentarioService = inject(ComentarioService);
   authService = inject(AuthService);
   toast = inject(ToastrService);
 
   comentarios: Comentario[] = [];
+  user$: Observable<Usuario>;
   userRole = '';
   userId = 0;
   nombresUsuario = '';
@@ -36,10 +40,16 @@ export class ComentariosComponent implements OnInit {
     Validators.maxLength(500)
   ]);
 
-  ngOnInit(): void {
-    this.userRole = this.authService.getUserRole();
-    this.userId = this.authService.getUserId();
-    this.nombresUsuario = this.authService.getNames();
+  constructor() {
+    this.user$ = this.authService.fetchUser();
+    this.user$.pipe(
+          map(user => {
+              this.userId = user ? user.id : 0;
+              this.userRole = user ? user.rol : '';
+              this.nombresUsuario = user ? `${user.apellidoPaterno} ${user.apellidoMaterno}, ${user.nombres}` : '';
+            }
+          )
+        );
     if (this.userRole === 'PACIENTE' || !this.userRole) {
       this.disabledButton = true;
     }

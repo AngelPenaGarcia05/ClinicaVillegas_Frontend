@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
 
 import { map, Observable } from 'rxjs';
-import { CitaService } from '../../services/cita.service';
-import { AuthService } from '../../../auth/services/auth.service';
-import { Usuario } from '../../../shared/interfaces/usuario';
-import { Cita } from '../../interfaces/cita';
+import { Cita } from '../../../interfaces/cita';
+import { CitaService } from '../../../services/cita.service';
+import { AuthService } from '../../../../auth/services/auth.service';
+import { Usuario } from '../../../../shared/interfaces/usuario';
+
 
 
 @Component({
