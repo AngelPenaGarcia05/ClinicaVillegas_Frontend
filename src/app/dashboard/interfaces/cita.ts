@@ -3,6 +3,7 @@ import { TipoDocumento } from "./tipo-documento";
 import { Tratamiento } from "./tratamiento";
 
 
+
 export interface Cita {
     id: number;
 

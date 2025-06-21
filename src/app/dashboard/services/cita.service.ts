@@ -1,15 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Cita } from '../Interfaces/Cita';
 import { environment } from '../../../environments/environment.development';
+import { Cita } from '../interfaces/cita';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CitaService {
 
-  private baseUrl = environment.apiUrl + 'citas';
+  private baseUrl = environment.apiUrl + '/citas';
 
   constructor(private http: HttpClient) { }
 
@@ -18,7 +18,7 @@ export class CitaService {
     page?: number,
     size?: number
   }): Observable<{ content: Cita[], totalPages: number, totalElements: number, number: number }> {
-    return this.http.get<any>(`/api/citas`, {
+    return this.http.get<any>(this.baseUrl, {
       params: {
         usuarioId: params.usuarioId,
         page: params.page?.toString() || '0',

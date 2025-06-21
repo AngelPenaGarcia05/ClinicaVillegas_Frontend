@@ -16,7 +16,7 @@
                 </tr>
             </thead>
             <tbody>
-                @for (cita of citas | async; track $index) {
+                @for (cita of citas; track $index) {
                 <tr>
                     <td>{{cita.id}}</td>
                     <td>

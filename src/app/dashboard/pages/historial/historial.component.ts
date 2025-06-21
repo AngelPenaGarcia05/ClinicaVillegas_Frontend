@@ -1,17 +1,19 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
+
+import { map, Observable } from 'rxjs';
 import { CitaService } from '../../services/cita.service';
-import { Cita } from '../../Interfaces/Cita';
-import { Observable } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../../auth/services/auth.service';
+import { Usuario } from '../../../shared/interfaces/usuario';
+import { Cita } from '../../interfaces/cita';
+
 
 @Component({
   selector: 'app-historial',
-  imports: [AsyncPipe],
+  imports: [],
   templateUrl: './historial.component.html',
   styleUrl: './historial.component.css'
 })
-export class HistorialComponent implements OnInit {
+export class HistorialComponent {
 
   citas: Cita[] = [];
   totalPages = 0;
@@ -21,9 +23,15 @@ export class HistorialComponent implements OnInit {
   citaService = inject(CitaService);
   authService = inject(AuthService);
   userId!: number;
+  user$: Observable<Usuario>;
 
-  ngOnInit(): void {
-    this.userId = this.authService.getUserId();
+  constructor() {
+    this.user$ = this.authService.fetchUser();
+    this.user$.pipe(
+      map(user =>
+        this.userId = user ? user.id : 0
+      )
+    );
     this.loadCitas();
   }
 
