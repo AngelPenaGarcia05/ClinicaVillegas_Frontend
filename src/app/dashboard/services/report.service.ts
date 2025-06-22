@@ -9,11 +9,14 @@ import { Observable } from 'rxjs';
 })
 export class ReportService {
 
-  private readonly API_URL = 'http://localhost:8080/api/reportes';
+  private readonly API_URL = environment.apiUrl + '/reportes';
 
   constructor(private http: HttpClient) {}
 
   generarReporte(dto: ReporteRequestDTO): Observable<any[]> {
     return this.http.post<any[]>(this.API_URL, dto);
+  }
+  descargarPdf(dto: ReporteRequestDTO): Observable<Blob> {
+    return this.http.post(`${this.API_URL}/pdf`, dto, {responseType: 'blob'});
   }
 }

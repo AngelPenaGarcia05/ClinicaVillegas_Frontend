@@ -11,7 +11,7 @@
                 <button type="button" class="btn btn-outline-secondary mb-2 mb-md-0" (click)="modalConfig.open()">
                     <i class="bi bi-gear"></i> Configuración
                 </button>
-                <button type="button" class="btn btn-outline-success mb-2 mb-md-0">
+                <button type="button" class="btn btn-outline-success mb-2 mb-md-0" (click)="modalExport.open()">
                     <i class="bi bi-download"></i> Exportar
                 </button>
             </div>
@@ -25,7 +25,7 @@
                     <thead class="table-light">
                         <tr>
                             @for (col of columnas; track $index) {
-                            <th>{{col}}</th>
+                            <th>{{col.toUpperCase()}}</th>
                             }
                         </tr>
                     </thead>
@@ -81,17 +81,17 @@
         <form [formGroup]="configForm">
             <div class="mb-3">
                 <label>Filas</label>
-                <select class="form-select" multiple formControlName="filas">
+                <select class="form-select" formControlName="filas">
                     @for (campo of camposDisponibles; track $index) {
-                    <option [value]="campo">{{ campo }}</option>
+                    <option [value]="campo.valor">{{ campo.titulo }}</option>
                     }
                 </select>
             </div>
             <div class="mb-3">
                 <label>Columna</label>
-                <select class="form-select" multiple formControlName="columnas">
+                <select class="form-select" formControlName="columnas">
                     @for (campo of camposDisponibles; track $index) {
-                    <option [value]="campo">{{ campo }}</option>
+                    <option [value]="campo.valor">{{ campo.titulo }}</option>
                     }
                 </select>
             </div>
@@ -142,5 +142,24 @@
     <div modal-footer>
         <button type="button" class="btn btn-secondary" (click)="modalConfig.close()">Cerrar</button>
         <button type="button" class="btn btn-primary" (click)="cargarReporte()">Aplicar</button>
+    </div>
+</app-modal>
+<app-modal #modalExport>
+    <div modal-header>
+        <h5 class="modal-title">Exportar Reporte</h5>
+    </div>
+    <div modal-body>
+        <p>Seleccione el formato de descarga:</p>
+        <div class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-danger" (click)="descargar('pdf'); modalExport.close()">
+                <i class="bi bi-file-earmark-pdf"></i> PDF
+            </button>
+            <button type="button" class="btn btn-success" (click)="descargar('excel'); modalExport.close()">
+                <i class="bi bi-file-earmark-excel"></i> Excel
+            </button>
+        </div>
+    </div>
+    <div modal-footer>
+        <button type="button" class="btn btn-secondary" (click)="modalExport.close()">Cancelar</button>
     </div>
 </app-modal>
