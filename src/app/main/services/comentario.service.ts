@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Comentario } from '../interfaces/comentario';
 import { environment } from '../../../environments/environment';
+import { Pageable } from '../../shared/interfaces/page';
 
 @Injectable({
   providedIn: 'root'
@@ -12,12 +13,7 @@ export class ComentarioService {
 
   constructor(private http: HttpClient) {}
 
-  getComentarios(page: number = 0, size: number = 5): Observable<{
-    content: Comentario[],
-    totalPages: number,
-    totalElements: number,
-    number: number
-  }> {
+  getComentarios(page: number = 0, size: number = 5): Observable<Pageable<Comentario>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());

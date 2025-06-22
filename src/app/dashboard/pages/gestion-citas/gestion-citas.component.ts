@@ -6,6 +6,8 @@ import { AuthService } from '../../../auth/services/auth.service';
 import { CommonModule } from '@angular/common';
 import { ModalComponent } from '../../../main/components/modal/modal.component';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { map, Observable } from 'rxjs';
+import { Usuario } from '../../../shared/interfaces/usuario';
 
 @Component({
   selector: 'app-gestion-citas',
@@ -14,11 +16,13 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
   templateUrl: './gestion-citas.component.html',
   styleUrl: './gestion-citas.component.css'
 })
-export class GestionCitasComponent implements OnInit {
+export class GestionCitasComponent {
 
   currentPageCita: number = 1;
   totalPagesCita: number = 1;
   paginatedCitas: Cita[] = [];
+
+  user$: Observable<Usuario>;
 
   citaService = inject(CitaService);
   authService = inject(AuthService);
@@ -34,10 +38,14 @@ export class GestionCitasComponent implements OnInit {
   toastrService = inject(ToastrService);
   @ViewChild('modalAtender') modalAtender!: ModalComponent;
   @ViewChild('modalCancelar') modalCancelar!: ModalComponent;
-  constructor() { }
 
-  ngOnInit(): void {
-    this.dentistaId = this.authService.getDentistaId();
+  constructor() {
+    this.user$ = this.authService.fetchUser();
+    this.user$.pipe(
+      map(user =>
+        this.dentistaId = user ? user.id : 0
+      )
+    );
     this.loadData();
   }
   loadData(): void {
@@ -46,7 +54,7 @@ export class GestionCitasComponent implements OnInit {
       page: this.currentPageCita - 1,
       size: 5
     }).subscribe((data) => {
-      this.totalPagesCita = data.totalPages;
+      this.totalPagesCita = data.page.totalPages;
       this.paginatedCitas = data.content;
     });
   }
@@ -104,7 +112,7 @@ export class GestionCitasComponent implements OnInit {
       size: 5
     }).subscribe({
       next: (data) => {
-        this.totalPagesCita = data.totalPages;
+        this.totalPagesCita = data.page.totalPages;
         this.paginatedCitas = data.content; // ya está paginado desde el backend
       },
       error: (error) => {

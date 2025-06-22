@@ -7,7 +7,7 @@ import { AuthLayoutComponent } from './auth/layouts/auth-layout/auth-layout.comp
 import { LoginComponent } from './auth/pages/login/login.component';
 import { RegisterComponent } from './auth/pages/register/register.component';
 import { DashboardLayoutComponent } from './dashboard/layouts/dashboard-layout/dashboard-layout.component';
-import { HistorialComponent } from './dashboard/pages/historial/historial/historial.component';
+import { HistorialComponent } from './dashboard/pages/historial/historial.component';
 
 export const routes: Routes = [
     {path: '', redirectTo: 'home', pathMatch: 'full' },

@@ -9,13 +9,13 @@ import { Usuario } from '../../../shared/interfaces/usuario';
 
 
 @Component({
-  selector: 'app-comentarios',
+  selector: 'app-comments',
   standalone: true,
   imports: [ReactiveFormsModule],
-  templateUrl: './comentarios.component.html',
-  styleUrl: './comentarios.component.css'
+  templateUrl: './comments.component.html',
+  styleUrl: './comments.component.css'
 })
-export class ComentariosComponent {
+export class CommentsComponent {
 
   comentarioService = inject(ComentarioService);
   authService = inject(AuthService);
@@ -60,7 +60,7 @@ export class ComentariosComponent {
     this.comentarioService.getComentarios(this.currentPage, this.pageSize).subscribe({
       next: (resp) => {
         this.comentarios = resp.content;
-        this.totalPages = resp.totalPages;
+        this.totalPages = resp.page.totalPages;
       },
       error: (err) => {
         this.toast.error('Error al cargar comentarios');
