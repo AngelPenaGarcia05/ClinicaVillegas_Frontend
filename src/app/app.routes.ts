@@ -9,6 +9,7 @@ import { RegisterComponent } from './auth/pages/register/register.component';
 import { DashboardLayoutComponent } from './dashboard/layouts/dashboard-layout/dashboard-layout.component';
 import { DynamicReportComponent } from './dashboard/pages/dynamic-report/dynamic-report.component';
 import { authGuard } from './shared/guards/auth.guard';
+import { HistorialComponent } from './dashboard/pages/historial/historial.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
