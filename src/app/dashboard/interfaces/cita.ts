@@ -20,6 +20,7 @@ export interface Cita {
     sexo: string;
     fechaNacimiento: string;
     estado: string;
+    telefono: string;
 
     dentista: Dentista;
     usuarioId: number;
