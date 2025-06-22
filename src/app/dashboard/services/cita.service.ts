@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { Cita } from '../interfaces/cita';
+import { Pageable } from '../../shared/interfaces/page';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class CitaService {
     sexo?: string,
     page?: number,
     size?: number
-  }): Observable<{ content: Cita[], totalPages: number, totalElements: number, number: number }> {
+  }): Observable<Pageable<Cita>> {
     const httpParams: any = {};
 
     if (params.usuarioId != null) httpParams['usuarioId'] = params.usuarioId;
@@ -37,7 +38,7 @@ export class CitaService {
     httpParams['page'] = params.page?.toString() || '0';
     httpParams['size'] = params.size?.toString() || '10';
 
-    return this.http.get<any>(this.baseUrl + '/paginado', { params: httpParams });
+    return this.http.get<any>(this.baseUrl, { params: httpParams });
   }
 
   createCita(data: any): Observable<any> {

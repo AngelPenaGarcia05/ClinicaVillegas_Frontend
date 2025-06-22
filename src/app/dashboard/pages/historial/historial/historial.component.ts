@@ -43,7 +43,7 @@ export class HistorialComponent {
       size: this.pageSize
     }).subscribe(response => {
       this.citas = response.content;
-      this.totalPages = response.totalPages;
+      this.totalPages = response.page.totalPages;
     });
   }
 

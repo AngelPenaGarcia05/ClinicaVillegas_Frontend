@@ -4,7 +4,6 @@ import { Usuario } from '../../shared/interfaces/usuario';
 import { HttpClient } from '@angular/common/http';
 import { LoginRequest } from '../interfaces/login-request';
 import { RegisterRequest } from '../interfaces/register-request';
-import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../../environments/environment.development';
 
 @Injectable({
@@ -56,21 +55,6 @@ export class AuthService {
         dni: documento
       }
     });
-  }
-
-  getDentistaId(): any {
-    if (typeof window !== 'undefined' && localStorage.getItem('token')) {
-      const token = localStorage.getItem('token');
-      console.log('Token cargado correctamente:', token); // Verifica si el token está en localStorage
-
-      if (token) {
-        const decodedToken: any = jwtDecode(token);
-        console.log('Token decodificado:', decodedToken); // Verifica el contenido del token
-        return decodedToken.dentistaId;
-      }
-    }
-    console.error('Token no disponible en localStorage o error al cargarlo.');
-    return null;
   }
 
   isLoggedIn(): boolean {
