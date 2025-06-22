@@ -1,0 +1,52 @@
+<div class="historial-container">
+    <div class="titulo-historial">
+        <h1>Historial de Reservas</h1>
+    </div>
+
+    <div class="tabla-container">
+        <table class="reservas-historial">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Dentista</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>Monto</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (cita of citas; track $index) {
+                <tr>
+                    <td>{{cita.id}}</td>
+                    <td>
+                        {{cita.dentista.apellidoPaterno}} {{cita.dentista.apellidoMaterno}},
+                        {{cita.dentista.nombres}}<br>
+                        <span class="dni-reserva">{{cita.dentista.telefono}}</span>
+                    </td>
+                    <td>
+                        Tipo: {{cita.tratamiento.tipoTratamiento.nombre}}<br>
+                        Tratamiento: {{cita.tratamiento.nombre}}<br>
+                        Fecha: {{cita.fecha}}<br>
+                        Hora: {{cita.hora}}
+                    </td>
+                    <td><span class="estado-reserva pendiente">{{cita.estado}}</span></td>
+                    <td>S/.{{cita.tratamiento.costo}} PEN</td>
+                    <td>
+                        <button class="btn cancelar">Cancelar</button>
+                        <button class="btn reprogramar">Reprogramar</button>
+                    </td>
+                </tr>
+
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Controles de paginación -->
+    <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+        <button class="btn" (click)="prevPage()" [disabled]="currentPage === 0">Anterior</button>
+        <span style="align-self: center;">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+        <button class="btn" (click)="nextPage()" [disabled]="currentPage + 1 >= totalPages">Siguiente</button>
+    </div>
+</div>

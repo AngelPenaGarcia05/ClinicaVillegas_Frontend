@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { BlogCardComponent, CardInfo } from '../../components/blog-card/blog-card.component';
+import { CommentsComponent } from '../comments/comments.component';
 
 @Component({
   selector: 'app-blog',
-  imports: [BlogCardComponent],
+  imports: [BlogCardComponent, CommentsComponent],
   template: `
     <div class="container-fluid p-3 p-md-4">
       <div class="row g-4">
@@ -11,6 +12,9 @@ import { BlogCardComponent, CardInfo } from '../../components/blog-card/blog-car
           <blog-card class="col-12 col-sm-6 col-lg-4" [cardInfo]="card"></blog-card>
         }
       </div>
+    </div>
+    <div class="container-fluid p-3 p-md-4">
+      <app-comments></app-comments>
     </div>
   `,
 })

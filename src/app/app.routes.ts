@@ -7,6 +7,7 @@ import { AuthLayoutComponent } from './auth/layouts/auth-layout/auth-layout.comp
 import { LoginComponent } from './auth/pages/login/login.component';
 import { RegisterComponent } from './auth/pages/register/register.component';
 import { DashboardLayoutComponent } from './dashboard/layouts/dashboard-layout/dashboard-layout.component';
+import { HistorialComponent } from './dashboard/pages/historial/historial.component';
 
 export const routes: Routes = [
     {path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -19,5 +20,7 @@ export const routes: Routes = [
         {path: 'login', component: LoginComponent, title: 'Inicio de sesión'},
         {path: 'register', component: RegisterComponent, title: 'Registro'}
     ]},
-    {path: 'dashboard', component: DashboardLayoutComponent, title: 'Dashboard'}
+    {path: 'dashboard', component: DashboardLayoutComponent, title: 'Dashboard', children: [
+        {path: 'history', component: HistorialComponent, title: 'Historial de Pacientes | Clinica Dental Villegas'}
+    ]}
 ];

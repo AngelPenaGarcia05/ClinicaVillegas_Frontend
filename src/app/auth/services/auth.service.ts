@@ -15,7 +15,7 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<Usuario | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   login(data: LoginRequest): Observable<Usuario> {
     return this.http.post<Usuario>(`${this.BASE_PATH}/login`, data).pipe(
@@ -48,6 +48,13 @@ export class AuthService {
 
   getCurrentUser(): Usuario | null {
     return this.currentUserSubject.value;
+  }
+  getNamesWithReniecService(documento: string): Observable<any> {
+    return this.http.get<any>(environment.apiUrl + '/reniec', {
+      params: {
+        dni: documento
+      }
+    });
   }
 
   isLoggedIn(): boolean {

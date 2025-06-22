@@ -1,5 +1,8 @@
-import { Component, Signal, signal } from '@angular/core';
+import { Component, Signal, signal, inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment.development';
 import { ageValidator } from '../../../shared/validators/age.validator';
 
 @Component({
@@ -12,11 +15,12 @@ export class RegisterComponent {
 
   showPassword = signal(false);
   mostrarBotonDni = signal(true); //por ahora
+  authService = inject(AuthService);
   tiposDocumento = [];
 
   registerForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private router: Router,private fb: FormBuilder) {
     this.registerForm = this.fb.group({
       email: ['', [
         Validators.required,
@@ -93,15 +97,27 @@ export class RegisterComponent {
     this.registerForm.get('apellidoMaterno')?.reset();
   }
 
-  obtenerNombresApellidos(): void {
-    // Implementar lógica para obtener nombres y apellidos
+    obtenerNombresApellidos(){
+    this.authService.getNamesWithReniecService(this.registerForm.get('documento')?.value ?? '').subscribe({
+      next: (response) => {
+        this.registerForm.get('nombres')?.setValue(response.nombres);
+        this.registerForm.get('apellidoPaterno')?.setValue(response.apellidoPaterno);
+        this.registerForm.get('apellidoMaterno')?.setValue(response.apellidoMaterno);
+      },
+      error: (error) => {
+        console.log('Error:' + error.message);
+        alert(error.message);
+      }
+    });
   }
 
   onSubmit(): void {
-    if (this.registerForm.valid) {
-      console.log('Formulario válido', this.registerForm.value);
-    } else {
-      this.registerForm.markAllAsTouched();
-    }
+  if (this.registerForm.valid) {
+    console.log('Formulario válido', this.registerForm.value);
+    this.router.navigate(['/dashboard/reserva']);
+  } else {
+    this.registerForm.markAllAsTouched();
   }
+}
+
 }
