@@ -1,0 +1,35 @@
+<div class="stepper card">
+    <div class="card-header">
+        <div class="steps-circles">
+            <div *ngFor="let step of steps; let i = index" class="step-circle" [ngClass]="{'active': currentStep >= i}">
+                {{i + 1}}
+            </div>
+        </div>
+        <div class="progress mt-2">
+            <div class="progress-bar" role="progressbar" [style.width.%]="(currentStep / (steps.length - 1)) * 100"
+                [attr.aria-valuenow]="currentStep" [attr.aria-valuemin]="0" [attr.aria-valuemax]="steps.length - 1">
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card-body">
+        <ng-container *ngIf="steps">
+            <div *ngFor="let step of steps; let i = index">
+                <div *ngIf="currentStep === i" class="step-content">
+                    <ng-content /><ng-container [ngTemplateOutlet]="step"></ng-container>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+
+    <div class="card-footer d-flex justify-content-between">
+        <button class="btn btn-secondary" (click)="prevStep()" [disabled]="currentStep === 0">
+            Anterior
+        </button>
+        <button class="btn" style="background-color: var(--first-color);color: white;" (click)="nextStep()"
+            [disabled]="currentStep === steps.length - 1 || !isStepValid()">
+            Siguiente
+        </button>
+    </div>
+</div>
