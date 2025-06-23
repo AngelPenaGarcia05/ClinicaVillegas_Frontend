@@ -1,13 +1,10 @@
 import { Component, inject } from '@angular/core';
-
 import { map, Observable } from 'rxjs';
-import { Cita } from '../../interfaces/cita';
+import { Cita } from '../../../shared/interfaces/cita';
 import { CitaService } from '../../services/cita.service';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Usuario } from '../../../shared/interfaces/usuario';
-
-
-
+import { Pageable } from '../../../shared/interfaces/page';
 
 @Component({
   selector: 'app-historial',
@@ -38,13 +35,15 @@ export class HistorialComponent {
   }
 
   loadCitas(): void {
-    this.citaService.getCitas({
-      usuarioId: this.userId,
-      page: this.currentPage,
-      size: this.pageSize
-    }).subscribe(response => {
-      this.citas = response.content;
-      this.totalPages = response.page.totalPages;
+    this.citaService.buscarCitas({ usuarioId: this.userId }, false, this.currentPage, this.pageSize).subscribe({
+      next: (response) => {
+        const responseFormat = response as Pageable<Cita>;
+        this.citas = responseFormat.content;
+        this.totalPages = responseFormat.page.totalPages;
+      },
+      error: (error) => {
+        console.log(error);
+      }
     });
   }
 

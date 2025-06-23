@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
-import { Cita } from '../interfaces/cita';
+import { Cita } from '../../shared/interfaces/cita';
 import { Pageable } from '../../shared/interfaces/page';
 
 @Injectable({
@@ -10,51 +10,119 @@ import { Pageable } from '../../shared/interfaces/page';
 })
 export class CitaService {
 
-  private baseUrl = environment.apiUrl + '/citas';
+  private readonly API_BASE_URL = environment.apiUrl + '/citas';
 
   constructor(private http: HttpClient) { }
 
-  getCitas(params: {
-    usuarioId?: number,
-    dentistaId?: number,
-    estado?: string,
-    fechaInicio?: string,
-    fechaFin?: string,
-    tratamientoId?: number,
-    sexo?: string,
-    page?: number,
-    size?: number
-  }): Observable<Pageable<Cita>> {
-    const httpParams: any = {};
+  /**
+   * Busca citas con varios filtros y opciones de paginación.
+   * @param params Objeto con los parámetros de búsqueda.
+   * @param all Si es true, obtiene todas las citas sin paginación.
+   * @param page Número de página (solo si all es false).
+   * @param size Tamaño de la página (solo si all es false).
+   * @returns Un Observable que emite una Pageable<CitaResponse> si se usa paginación, o List<CitaResponse> si se pide 'all'.
+   */
+  buscarCitas(
+    params: {
+      usuarioId?: number;
+      dentistaId?: number;
+      estado?: string;
+      fechaInicio?: string; // Formato YYYY-MM-DD
+      fechaFin?: string;    // Formato YYYY-MM-DD
+      tratamientoId?: number;
+      sexo?: string;
+    } = {},
+    all: boolean = false,
+    page: number = 0,
+    size: number = 10
+  ): Observable<Pageable<Cita> | Cita[]> {
+    let httpParams = new HttpParams();
 
-    if (params.usuarioId != null) httpParams['usuarioId'] = params.usuarioId;
-    if (params.dentistaId != null) httpParams['dentistaId'] = params.dentistaId;
-    if (params.estado != null) httpParams['estado'] = params.estado;
-    if (params.fechaInicio != null) httpParams['fechaInicio'] = params.fechaInicio;
-    if (params.fechaFin != null) httpParams['fechaFin'] = params.fechaFin;
-    if (params.tratamientoId != null) httpParams['tratamientoId'] = params.tratamientoId;
-    if (params.sexo != null) httpParams['sexo'] = params.sexo;
+    if (params.usuarioId) {
+      httpParams = httpParams.set('usuarioId', params.usuarioId.toString());
+    }
+    if (params.dentistaId) {
+      httpParams = httpParams.set('dentistaId', params.dentistaId.toString());
+    }
+    if (params.estado) {
+      httpParams = httpParams.set('estado', params.estado);
+    }
+    if (params.fechaInicio) {
+      httpParams = httpParams.set('fechaInicio', params.fechaInicio);
+    }
+    if (params.fechaFin) {
+      httpParams = httpParams.set('fechaFin', params.fechaFin);
+    }
+    if (params.tratamientoId) {
+      httpParams = httpParams.set('tratamientoId', params.tratamientoId.toString());
+    }
+    if (params.sexo) {
+      httpParams = httpParams.set('sexo', params.sexo);
+    }
 
-    httpParams['page'] = params.page?.toString() || '0';
-    httpParams['size'] = params.size?.toString() || '10';
+    if (all) {
+      httpParams = httpParams.set('all', 'true');
+    } else {
+      httpParams = httpParams.set('page', page.toString());
+      httpParams = httpParams.set('size', size.toString());
+    }
 
-    return this.http.get<any>(this.baseUrl, { params: httpParams });
+    return this.http.get<Pageable<Cita> | Cita[]>(this.API_BASE_URL, { params: httpParams });
   }
 
-  createCita(data: any): Observable<any> {
-    return this.http.post<any>(this.baseUrl, data);
+  /**
+   * Agrega una nueva cita.
+   * @param data Los datos de la cita a agregar.
+   * @returns Un Observable que completa sin valor (ResponseEntity<Void>).
+   */
+  agregarCita(data: any): Observable<void> {
+    return this.http.post<void>(this.API_BASE_URL, data);
   }
 
-  deleteCita(id: number): Observable<any> {
-    return this.http.delete<any>(this.baseUrl + '/' + id);
+  /**
+   * Actualiza una cita existente por su ID.
+   * @param id El ID de la cita a actualizar.
+   * @param data Los datos actualizados de la cita.
+   * @returns Un Observable que completa sin valor (ResponseEntity<Void>).
+   */
+  actualizarCita(id: number, data: any): Observable<void> {
+    return this.http.put<void>(`${this.API_BASE_URL}/${id}`, data);
   }
 
-  successCita(id: number): Observable<any> {
-    return this.http.put<any>(this.baseUrl + '/atender/' + id, {});
+  /**
+   * Marca una cita como "atendida".
+   * @param id El ID de la cita a atender.
+   * @returns Un Observable que completa sin valor (ResponseEntity<Void>).
+   */
+  atenderCita(id: number): Observable<void> {
+    return this.http.patch<void>(`${this.API_BASE_URL}/${id}/atender`, {});
   }
 
-  editCita(citaId: number, data: any): Observable<any> {
-    return this.http.put<any>(this.baseUrl + '/reprogramar/' + citaId, data);
+  /**
+   * Elimina una cita por su ID.
+   * @param id El ID de la cita a eliminar.
+   * @returns Un Observable que completa sin valor (ResponseEntity<Void>).
+   */
+  eliminarCita(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.API_BASE_URL}/${id}`);
   }
 
+  /**
+   * Valida la disponibilidad para una nueva cita.
+   * @param data Los datos para validar la disponibilidad.
+   * @returns Un Observable que emite true si está disponible, false si no.
+   */
+  validarDisponibilidad(data: any): Observable<boolean> {
+    return this.http.post<boolean>(`${this.API_BASE_URL}/validar-disponibilidad`, data);
+  }
+
+  /**
+   * Reprograma una cita existente.
+   * @param id El ID de la cita a reprogramar.
+   * @param data Los datos con la nueva fecha de la cita.
+   * @returns Un Observable que completa sin valor (ResponseEntity<Void>).
+   */
+  reprogramarCita(id: number, data: any): Observable<void> {
+    return this.http.patch<void>(`${this.API_BASE_URL}/${id}/reprogramar`, data);
+  }
 }

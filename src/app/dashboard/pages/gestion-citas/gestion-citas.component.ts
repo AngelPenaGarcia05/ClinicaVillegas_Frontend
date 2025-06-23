@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CitaService } from '../../services/cita.service';
-import { Cita } from '../../interfaces/cita';
+import { Cita } from '../../../shared/interfaces/cita';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../auth/services/auth.service';
 import { CommonModule } from '@angular/common';
