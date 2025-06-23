@@ -1,29 +1,24 @@
-import { Component, input } from '@angular/core';
+import { AfterViewInit, Component, inject, input, OnInit } from '@angular/core';
 import { UserCardComponent } from '../../../shared/components/user-card/user-card.component';
+import { Observable } from 'rxjs';
+import { Usuario } from '../../../shared/interfaces/usuario';
+import { AuthService } from '../../../auth/services/auth.service';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: '[app-navbar]',
-  imports: [UserCardComponent],
+  imports: [UserCardComponent, AsyncPipe],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
 
   navItems = input<NavItem[]>();
-  user: User = {
-    name: 'PEÑA GARCÍA, ANGEL MARTÍN',
-    role: 'ADMIN',
-    image: 'media/logo.jpg'
-  }
-  isLogged = false;
-  
+  authService = inject(AuthService);
+  user$ = this.authService.currentUser$;
 }
-interface User{
-  name: string,
-  role: string,
-  image: string
-}
-export interface NavItem{
+
+export interface NavItem {
   name: string,
   link: string
 }

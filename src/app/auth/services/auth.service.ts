@@ -14,8 +14,19 @@ export class AuthService {
   private readonly BASE_PATH = environment.apiUrl + '/auth';
   private currentUserSubject = new BehaviorSubject<Usuario | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  private initialized = false;
 
   constructor(private http: HttpClient) { }
+
+  initUser(): void {
+    if (this.initialized) return;
+
+    this.initialized = true;
+    this.fetchUser().subscribe({
+      next: () => { },
+      error: () => this.currentUserSubject.next(null)
+    });
+  }
 
   login(data: LoginRequest): Observable<Usuario> {
     return this.http.post<Usuario>(`${this.BASE_PATH}/login`, data).pipe(
