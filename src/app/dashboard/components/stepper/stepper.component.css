@@ -1,0 +1,44 @@
+.stepper {
+    max-width: 600px;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.progress {
+    height: 8px;
+    border-radius: 4px;
+}
+
+.steps-circles {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.step-circle{
+    background-color: #cecece;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 10px;
+    font-size: 16px;
+    color: #fff;
+    position: relative;
+}
+
+.step-circle.active{
+    background-color: var(--first-color);
+}
+.step-line.active{
+    color: var(--first-color);
+}
+.progress-bar {
+    background-color: var(--first-color);
+}
+.step-content {
+    padding: 16px;
+}

@@ -4,7 +4,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { AuthService } from '../../services/auth.service';
 import { response } from 'express';
 import { error } from 'console';
-import { Router } from '@angular/router';
+import { Route, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -40,7 +40,7 @@ export class LoginComponent {
       }).subscribe({
         next: (response) =>{
           console.log(response);
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['dashboard/reports']);
         },
         error: (error) => {
           console.log(error);

@@ -62,7 +62,7 @@ import { Component, input } from '@angular/core';
   `]
 })
 export class UserCardComponent {
-  username = input.required<string|null>();
-  role = input.required<string|null>();
-  image = input.required<string|null>();
+  username = input.required<string | null>();
+  role = input.required<string | null>();
+  image = input.required<string | null>();
 }

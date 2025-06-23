@@ -1,0 +1,22 @@
+<div class="datepicker card">
+    <div class="datepicker-header">
+        <button class="btn" (click)="previousMonth()">
+            <i class="bi bi-chevron-left"></i>
+        </button>
+        <span>{{ currentDate | date: 'MMMM yyyy' }}</span>
+        <button class="btn" (click)="nextMonth()">
+            <i class="bi bi-chevron-right"></i>
+        </button>
+    </div>
+
+    <div class="datepicker-weekdays">
+        <div *ngFor="let day of daysOfWeek">{{ day }}</div>
+    </div>
+
+    <div class="datepicker-days">
+        <div *ngFor="let day of daysInMonth" style="cursor: pointer;">
+            <p [class.disabled]="isDateDisabled(day)" [class.selected]="isSelected(day)" (click)="selectDate(day)">{{
+                day.getDate() }}</p>
+        </div>
+    </div>
+</div>

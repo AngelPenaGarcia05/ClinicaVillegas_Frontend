@@ -24,17 +24,15 @@
 .nav-link {
     color: #000;
     font-size: 18px;
-    transition: color 0.3s ease-in-out, font-weight 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 .nav-link:hover {
-    color: #002e5e;
-    transform: scale(1.1);
+    color: #0051a7;
 }
 
 .btn-login {
     background-color: #002e5e;
-    color: #01CFC9;
+    color: white;
     border-radius: 10px;
     padding: 8px 20px;
     font-size: 16px;
