@@ -1,0 +1,51 @@
+.container-dashboard{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin: 0;
+    padding: 10px;
+    gap: 10px;
+}
+.form-container {
+    width: 400px;
+    height: 600px;
+    background-color: #ffffff;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.form-container h1 {
+    font-size: 1.85rem;
+    font-weight: 650;
+    color: #002e5e;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+
+.btn {
+    background-color: #001f54;
+    color: white;
+}
+
+.btn:hover {
+    background-color: #00337c;
+}
+
+.tabla-container-horarios{
+    max-width: 1300px;
+    width: 70%;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

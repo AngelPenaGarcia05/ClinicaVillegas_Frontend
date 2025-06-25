@@ -13,6 +13,11 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+.btn-blue-color{
+    background-color: var(--blue-color);
+    color: white;
+    width: 100%;
+}
 
 h1 {
     padding: 20px;
@@ -63,9 +68,13 @@ h1 {
     color: #2563eb;
     background-color: #e0f2fe;
 }
-.estado-reserva.completado{
+.estado-reserva.atendida{
     color: #10b981;
     background-color: #d1fae5;
+}
+.estado-reserva.cancelada{
+    color: #de1919;
+    background-color: #fad1d1;
 }
 
 .btn{

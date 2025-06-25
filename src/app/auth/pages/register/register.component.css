@@ -13,6 +13,10 @@
 .text-blue-color{
     color: var(--blue-color);
 }
+.bg-blue-color{
+    background-color: var(--blue-color);
+    color: white;
+}
 @media (max-width: 768px){
     .card-register{
         min-width: auto;

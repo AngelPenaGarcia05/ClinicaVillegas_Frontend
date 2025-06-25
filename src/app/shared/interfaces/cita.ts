@@ -23,4 +23,5 @@ export interface Cita {
     dentista: Dentista;
     usuarioId: number;
     tratamiento: Tratamiento;
+    observaciones: string;
 }

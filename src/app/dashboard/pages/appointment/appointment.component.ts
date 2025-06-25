@@ -14,22 +14,26 @@ import { CitaService } from '../../services/cita.service';
 import { ToastrService } from 'ngx-toastr';
 import { TipoDocumentoService } from '../../services/tipo-documento.service';
 import { StepperComponent } from '../../components/stepper/stepper.component';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TipoTratamientoService } from '../../services/tipo-tratamiento.service';
 import { Usuario } from '../../../shared/interfaces/usuario';
 import { timeRangeValidator } from '../../../shared/validators/time-range.validator';
 import { citaValidator } from '../../../shared/validators/cita.validator';
+import { CalendarComponent } from '../../components/calendar/calendar.component';
+import { AsyncPipe } from '@angular/common';
+import { DatepickerComponent } from '../../components/datepicker/datepicker.component';
+import { fechaHoraNoPasadaValidator } from '../../../shared/validators/before-datetime.validator';
 
 @Component({
   selector: 'app-appointment',
-  imports: [],
+  imports: [CalendarComponent, StepperComponent, AsyncPipe, ReactiveFormsModule, DatepickerComponent],
   templateUrl: './appointment.component.html',
   styleUrl: './appointment.component.css'
 })
 export class AppointmentComponent implements OnInit {
   ocultarBotonReserva: boolean = false;
   user$!: Observable<Usuario>;
-  
+
   //variables para la consulta de datos
   tratamientos!: Observable<Tratamiento[]>;
   especialidades!: Observable<String[]>;
@@ -73,16 +77,43 @@ export class AppointmentComponent implements OnInit {
 
   ngOnInit() {
     this.tratamientos = this.tratamientoService.getTratamientos({}, true) as Observable<Tratamiento[]>;
-    this.tiposTratamientos = this.tipoDocumentoService.getTiposDocumento({}, true) as Observable<TipoTratamiento[]>;
+    this.tiposTratamientos = this.tipoTratamientoService.getTipoTratamientos(undefined, undefined, true) as Observable<TipoTratamiento[]>;
     this.especialidades = this.dentistaService.obtenerEspecialidades();
     this.dentistas = this.dentistaService.obtenerDentistas({}, true) as Observable<Dentista[]>;
     this.tiposDocumento = this.tipoDocumentoService.getTiposDocumento({}, true) as Observable<TipoDocumento[]>;
     this.user$ = this.authService.fetchUser();
-    this.user$.pipe(
-      map(user =>
-        this.userId = user ? user.id : 0
-      )
-    );
+    this.user$.subscribe((user) => {
+      this.userId = user ? user.id : 0
+      this.loadCitas();
+      console.log(this.userId)
+    });
+
+  }
+
+  constructor(private fb: FormBuilder, private changeDetectorRef: ChangeDetectorRef) {
+    this.reservaForm = this.fb.group({
+      tipo: this.fb.group({
+        tipoTratamiento: ['', Validators.required],
+        tratamientoId: [{ value: '', disabled: true }, Validators.required],
+        especialidad: ['', Validators.required],
+        dentistaId: [{ value: '', disabled: true }, Validators.required]
+      }),
+      horario: this.fb.group({
+        fecha: [null, Validators.required],
+        hora: [{ value: '', disabled: true }, Validators.required]
+      }, { validators: fechaHoraNoPasadaValidator() }),
+      paciente: this.fb.group({
+        nombres: ['', Validators.required],
+        apellidoPaterno: ['', Validators.required],
+        apellidoMaterno: ['', Validators.required],
+        tipoDocumento: ['', Validators.required],
+        numeroIdentidad: [{ value: '', disabled: true }, [Validators.required, Validators.pattern('^[0-9]*$')]],
+        sexo: ['', Validators.required],
+        fechaNacimiento: ['', [Validators.required]]
+      })
+    });
+  }
+  loadCitas() {
     this.citaService.buscarCitas({
       usuarioId: this.userId,
       estado: 'Pendiente'
@@ -98,29 +129,6 @@ export class AppointmentComponent implements OnInit {
     });
   }
 
-  constructor(private fb: FormBuilder, private changeDetectorRef: ChangeDetectorRef) {
-    this.reservaForm = this.fb.group({
-      tipo: this.fb.group({
-        tipoTratamiento: ['', Validators.required],
-        tratamientoId: [{ value: '', disabled: true }, Validators.required],
-        especialidad: ['', Validators.required],
-        dentistaId: [{ value: '', disabled: true }, Validators.required]
-      }),
-      horario: this.fb.group({
-        fecha: [null, Validators.required],
-        hora: [{ value: '', disabled: true }, Validators.required]
-      }),
-      paciente: this.fb.group({
-        nombres: ['', Validators.required],
-        apellidoPaterno: ['', Validators.required],
-        apellidoMaterno: ['', Validators.required],
-        tipoDocumento: ['', Validators.required],
-        numeroIdentidad: [{ value: '', disabled: true }, [Validators.required, Validators.pattern('^[0-9]*$')]],
-        sexo: ['', Validators.required],
-        fechaNacimiento: ['', [Validators.required]]
-      })
-    });
-  }
 
   obtenerNombresApellidos() {
     this.desactivarBotonDni = true;
@@ -160,7 +168,7 @@ export class AppointmentComponent implements OnInit {
     const queryparams = {
       especializacion: especialidad
     };
-    this.dentistas = this.dentistaService.obtenerDentistas(queryparams) as Observable<Dentista[]>;
+    this.dentistas = this.dentistaService.obtenerDentistas(queryparams, true) as Observable<Dentista[]>;
     this.reservaForm.get('tipo')?.get('dentistaId')?.enable();
   }
 
@@ -170,7 +178,7 @@ export class AppointmentComponent implements OnInit {
     const queryparams = {
       tipoId: parseInt(tipoTratamiento)
     };
-    this.tratamientos = this.tratamientoService.getTratamientos(queryparams) as Observable<Tratamiento[]>;
+    this.tratamientos = this.tratamientoService.getTratamientos(queryparams, true) as Observable<Tratamiento[]>;
     this.reservaForm.get('tipo')?.get('tratamientoId')?.enable();
   }
 
@@ -275,7 +283,7 @@ export class AppointmentComponent implements OnInit {
       usuarioId: this.userId,
       tratamientoId: this.reservaForm.get('tipo')?.get('tratamientoId')?.value
     };
-
+    console.log(reservaData)
     this.citaService.agregarCita(reservaData).subscribe({
       next: (data) => {
         this.toastService.success("Cita reservada con éxito");
@@ -298,5 +306,9 @@ export class AppointmentComponent implements OnInit {
       }
     });
 
+  }
+  getError(controlPath: string, errorCode: string): boolean | undefined {
+    const control = this.reservaForm.get(controlPath);
+    return control?.hasError(errorCode) && control?.touched;
   }
 }

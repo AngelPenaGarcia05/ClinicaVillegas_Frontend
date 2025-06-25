@@ -1,107 +1,141 @@
 <div class="historial-container">
-    <div class="titulo-historial">
-        <h1>Historial de Reservas</h1>
-    </div>
-    <div class="tabla-container mb-3">
-        <form [formGroup]="formCitas">
-            <label for="fechaInicio">Fecha de inicio</label>
-            <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" formControlName="fechaInicio"
-                [class]="{'is-invalid': formCitas.get('fechaInicio')?.invalid && formCitas.get('fechaInicio')?.touched}"
-                (change)="loadDataWithParams()">
-            <label for="fechaFin">Fecha de fin</label>
-            <input type="date" class="form-control" id="fechaFin" name="fechaFin" formControlName="fechaFin"
-                [class]="{'is-invalid': formCitas.get('fechaFin')?.invalid && formCitas.get('fechaFin')?.touched}"
-                (change)="loadDataWithParams()">
-            <label for="estado">Estado</label>
-            <select class="form-select" id="estado" name="estado" formControlName="estado"
-                (change)="loadDataWithParams()">
-                <option value="Pendiente">Pendiente</option>
-                <option value="Atendida">Atendida</option>
-                <option value="Cancelada">Cancelada</option>
-            </select>
-        </form>
-    </div>
-    <div class="tabla-container">
-        <table class="reservas-historial">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Paciente</th>
-                    <th>Descripción</th>
-                    <th>Estado</th>
-                    <th>Monto</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (cita of paginatedCitas; track $index) {
-                <tr>
-                    <td>{{cita.id}}</td>
-                    <td>
-                        {{cita.apellidoPaterno}} {{cita.apellidoMaterno}},
-                        {{cita.nombres}}<br>
-                        <span class="dni-reserva">{{cita.telefono}}</span>
-                    </td>
-                    <td>
-                        Tipo: {{cita.tratamiento.tipoTratamiento.nombre}}<br>
-                        Tratamiento: {{cita.tratamiento.nombre}}<br>
-                        Fecha: {{cita.fecha}}<br>
-                        Hora: {{cita.hora}}
-                    </td>
-                    <td><span class="estado-reserva" [class]="cita.estado.toLowerCase()">{{cita.estado}}</span></td>
-                    <td>S/.{{cita.tratamiento.costo}} PEN</td>
-                    <td>
-                        @if (cita.estado == 'Pendiente') {
-                        <button class="btn atender" (click)="openModalToFocus(cita)">Atender</button>
-                        <button class="btn cancelar" (click)="openModalToCancel(cita)">Cancelar</button>
-                        }
-                    </td>
-                </tr>
+  <div class="titulo-historial">
+    <h1>Reservas asignadas</h1>
+  </div>
+  <div class="tabla-container mb-3">
+    <form [formGroup]="formCitas">
+      <label for="fechaInicio">Fecha de inicio</label>
+      <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" formControlName="fechaInicio"
+        [class]="{'is-invalid': formCitas.get('fechaInicio')?.invalid && formCitas.get('fechaInicio')?.touched}">
+      <label for="fechaFin">Fecha de fin</label>
+      <input type="date" class="form-control" id="fechaFin" name="fechaFin" formControlName="fechaFin"
+        [class]="{'is-invalid': formCitas.get('fechaFin')?.invalid && formCitas.get('fechaFin')?.touched}">
+      <label for="estado">Estado</label>
+      <select class="form-select" id="estado" name="estado" formControlName="estado">
+        <option value="Pendiente">Pendiente</option>
+        <option value="Atendida">Atendida</option>
+        <option value="Cancelada">Cancelada</option>
+      </select>
+      <button class="btn" [disabled]="!formCitas.valid" (click)="loadCitasWithParams()">Buscar</button>
+    </form>
+  </div>
+  <div class="tabla-container">
+    <table class="reservas-historial">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Paciente</th>
+          <th>Descripción</th>
+          <th>Estado</th>
+          <th>Monto</th>
+          <th>Observaciones</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (cita of citas; track $index) {
+        <tr>
+          <td>{{cita.id}}</td>
+          <td>
+            {{cita.apellidoPaterno}} {{cita.apellidoMaterno}},
+            {{cita.nombres}}<br>
+            <span class="dni-reserva">{{cita.telefono}}</span>
+          </td>
+          <td>
+            Tipo: {{cita.tratamiento.tipoTratamiento.nombre}}<br>
+            Tratamiento: {{cita.tratamiento.nombre}}<br>
+            Fecha: {{cita.fecha}}<br>
+            Hora: {{cita.hora}}
+          </td>
+          <td><span class="estado-reserva" [class]="cita.estado.toLowerCase()">{{cita.estado}}</span></td>
+          <td>S/.{{cita.tratamiento.costo}} PEN</td>
+          <td>{{cita.observaciones}}</td>
+          <td>
+            @if (cita.estado === 'Pendiente') {
+            <button class="btn cancelar" (click)="openModalToCancel(cita)">Cancelar</button>
+            <button class="btn reprogramar"
+              (click)="establecerHorarios(cita); openModalToReprogramar(cita)">Reprogramar</button>
+              @if (yaHaPasadoFechaHora(cita.fecha, cita.hora)) {
+                <button class="btn atender" (click)="openModalToAtender(cita)">Atender</button>
+              }
+            }
+          </td>
+        </tr>
 
-                }
-            </tbody>
-        </table>
-    </div>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Controles de paginación -->
+  <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+    <button class="btn" (click)="prevPage()" [disabled]="currentPage === 0">Anterior</button>
+    <span style="align-self: center;">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+    <button class="btn" (click)="nextPage()" [disabled]="currentPage + 1 >= totalPages">Siguiente</button>
+  </div>
 </div>
-<nav>
-    <ul class="pagination justify-content-center">
-        <li class="page-item" [ngClass]="{ 'disabled': currentPageCita === 1 }">
-            <a class="page-link" (click)="onPageChangeCita(currentPageCita - 1)">&#x276E;</a>
-        </li>
-        <li class="page-item" *ngFor="let page of [].constructor(totalPagesCita); let i = index">
-            <a class="page-link" [ngClass]="{ 'active': currentPageCita === i + 1 }"
-                (click)="onPageChangeCita(i + 1)">{{ i + 1 }}</a>
-        </li>
-        <li class="page-item" [ngClass]="{ 'disabled': currentPageCita === totalPagesCita }">
-            <a class="page-link" (click)="onPageChangeCita(currentPageCita + 1)">&#x276F;</a>
-        </li>
-    </ul>
-</nav>
-<app-modal #modalAtender>
-    <div modal-header>
-        <h5>Atender a la reserva</h5>
-    </div>
-    <div modal-body>
-        @if (trackedCita) {
-        <p>¿Desea marcar como atendida a la reserva con id {{trackedCita.id}}?</p>
-        }
-    </div>
-    <div modal-footer>
-        <button type="button" class="btn btn-secondary" (click)="modalAtender.close()">Cerrar</button>
-        <button type="button" class="btn btn-primary ms-2" (click)="atenderReserva()">Atender</button>
-    </div>
+<app-modal #modalCancelacion>
+  <div modal-header>
+    <h5 class="modal-title">¿Desea cancelar la reserva?</h5>
+  </div>
+  <div modal-body>
+    @if (trackedCita) {
+    <p>La reserva para {{trackedCita.tratamiento.nombre}} con fecha {{trackedCita.fecha}} y hora {{trackedCita.hora}}
+      será cancelada.</p>
+    <form [formGroup]="formCancelacion">
+      <label for="observaciones">Observaciones</label>
+      <textarea id="observaciones" class="form-control" formControlName="observaciones"></textarea>
+    </form>
+    }
+  </div>
+  <div modal-footer>
+    <button class="btn btn-secondary" (click)="modalCancelacion.close()">Cancelar</button>
+    <button class="btn btn-primary" (click)="cancelarReserva()">Aceptar</button>
+  </div>
 </app-modal>
-<app-modal #modalCancelar>
-    <div modal-header>
-        <h5>Cancelar una reserva</h5>
-    </div>
-    <div modal-body>
-        @if (trackedCita) {
-        <p>¿Desea cancelar la reserva con id {{trackedCita.id}}?</p>
-        }
-    </div>
-    <div modal-footer>
-        <button type="button" class="btn btn-secondary" (click)="modalCancelar.close()">Cerrar</button>
-        <button type="button" class="btn btn-primary ms-2" (click)="cancelarReserva()">Cancelar</button>
-    </div>
+
+
+<app-modal #modalReprogramar>
+  <div modal-header>
+    <h5 class="modal-title">¿Desea reprogramar la reserva?</h5>
+  </div>
+  <div modal-body>
+    <form [formGroup]="formReprogramar">
+      <label class="form-label" for="fecha">Fecha:</label>
+      <span class="text-dark fw-bold ms-2">{{formReprogramar.get('fecha')?.value}}</span>
+      <app-datepicker [disabledDates]="disabledDates" [minDate]="minDate" [maxDate]="maxDate"
+        (dateSelected)="handleDateSelected($event)"></app-datepicker>
+      <small class="form-text text-danger"
+        [hidden]="formReprogramar.get('fecha')?.valid || !formReprogramar.get('fecha')?.touched">La
+        fecha es obligatoria.</small>
+      <label class="form-label" for="hora">Hora:</label>
+      <input type="time" class="form-control" id="hora" name="hora" formControlName="hora"
+        [class]="{'is-invalid': formReprogramar.get('hora')?.invalid && formReprogramar.get('hora')?.touched}">
+      <small class="form-text text-danger"
+        [hidden]="!formReprogramar.get('hora')?.hasError('outOfRange') || !formReprogramar.get('hora')?.touched">El
+        horario de atención es de {{horarioSelected?.horaComienzo}} a {{horarioSelected?.horaFin}}</small>
+      <small class="form-text text-danger mt-1" [hidden]="!formReprogramar.get('hora')?.hasError('citaInvalid')">Ya hay
+        un cita reservada en este horario</small>
+    </form>
+  </div>
+  <div modal-footer>
+    <button class="btn btn-secondary" (click)="modalReprogramar.close()">Cancelar</button>
+    <button class="btn btn-primary" [disabled]="formReprogramar.invalid && activarBoton"
+      (click)="reprogramarReserva()">Reprogramar</button>
+  </div>
+</app-modal>
+<app-modal #modalAtender>
+  <div modal-header>
+    <h5 class="modal-title">¿Desea atender la reserva?</h5>
+  </div>
+  <div modal-body>
+    @if (trackedCita) {
+      <p>La reserva para {{trackedCita.tratamiento.nombre}} con fecha {{trackedCita.fecha}} y hora {{trackedCita.hora}}
+        será atendida.</p>
+    }
+  </div>
+  <div modal-footer>
+    <button class="btn btn-secondary" (click)="modalAtender.close()">Cancelar</button>
+    <button class="btn btn-primary" (click)="atenderReserva()">Aceptar</button>
+  </div>
 </app-modal>

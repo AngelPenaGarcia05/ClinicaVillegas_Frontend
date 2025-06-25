@@ -11,6 +11,8 @@ import { DynamicReportComponent } from './dashboard/pages/dynamic-report/dynamic
 import { authGuard } from './shared/guards/auth.guard';
 import { HistorialComponent } from './dashboard/pages/historial/historial.component';
 import { GestionCitasComponent } from './dashboard/pages/gestion-citas/gestion-citas.component';
+import { AppointmentComponent } from './dashboard/pages/appointment/appointment.component';
+import { DentistScheduleComponent } from './dashboard/pages/dentist-schedule/dentist-schedule.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -29,7 +31,9 @@ export const routes: Routes = [
     },
     {
         path: 'dashboard', component: DashboardLayoutComponent, children: [
+            { path: 'appointment', component: AppointmentComponent, title: 'Reserva de citas | Clinica Dental Villegas', canActivate: [authGuard], data: { roles: ['PACIENTE', 'DENTISTA', 'ADMINISTRADOR'] } },
             { path: 'history', component: HistorialComponent, title: 'Historial | Clinica Dental Villegas', canActivate: [authGuard], data: { roles: ['PACIENTE', 'ADMINISTRADOR'] } },
+            { path: 'dentist-schedule', component: DentistScheduleComponent, title: 'Horarios | Clinica Dental Villegas', canActivate: [authGuard], data: { roles: ['DENTISTA'] } },
             { path: 'assigned', component: GestionCitasComponent, title: 'Gestión de citas | Clinica Dental Villegas', canActivate: [authGuard], data: { roles: ['DENTISTA'] }},
             { path: 'reports', component: DynamicReportComponent, title: 'Reportes Dinámicos | Clinica Dental Villegas', canActivate: [authGuard], data: { roles: ['DENTISTA', 'ADMINISTRADOR'] } },
         ],

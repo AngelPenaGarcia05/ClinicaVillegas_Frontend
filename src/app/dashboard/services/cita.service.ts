@@ -103,8 +103,8 @@ export class CitaService {
    * @param id El ID de la cita a eliminar.
    * @returns Un Observable que completa sin valor (ResponseEntity<Void>).
    */
-  eliminarCita(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.API_BASE_URL}/${id}`);
+  eliminarCita(id: number, data: any): Observable<void> {
+    return this.http.patch<void>(`${this.API_BASE_URL}/${id}/cancelar`, data);
   }
 
   /**

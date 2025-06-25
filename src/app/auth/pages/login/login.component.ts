@@ -40,7 +40,7 @@ export class LoginComponent {
       }).subscribe({
         next: (response) =>{
           console.log(response);
-          this.router.navigate(['dashboard/reports']);
+          this.router.navigate(['dashboard/appointment']);
         },
         error: (error) => {
           console.log(error);

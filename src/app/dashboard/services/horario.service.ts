@@ -43,7 +43,7 @@ export class HorarioService {
    * @param data The data for the schedule to add.
    * @returns An Observable emitting an object with a success message.
    */
-  agregarHorario(data: any): Observable<{ mensaje: string }> {
+  agregarHorario(data: any): Observable<any> {
     return this.http.post<{ mensaje: string }>(this.API_BASE_URL, data);
   }
 

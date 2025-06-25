@@ -24,12 +24,12 @@ export class DashboardLayoutComponent {
   constructor(private authService: AuthService, private router: Router) {
     this.user$ = this.authService.fetchUser();
     this.menuItems = [
-      { label: 'Reserva', link: '/dashboard/reserva', icon: 'bi bi-calendar3', roles: ["PACIENTE", 'DENTISTA', "ADMINISTRADOR"] },
+      { label: 'Reserva', link: '/dashboard/appointment', icon: 'bi bi-calendar3', roles: ["PACIENTE", 'DENTISTA', "ADMINISTRADOR"] },
       { label: 'Historial', link: '/dashboard/history', icon: 'bi bi-clock-history', roles: ["PACIENTE", "ADMINISTRADOR"] },
       { label: 'Administrador', link: '/dashboard/administrador', icon: 'bi bi-database-fill', roles: ["ADMINISTRADOR"] },
       { label: 'Reportes', link: '/dashboard/reports', icon: 'bi bi-bar-chart', roles: ["DENTISTA", "ADMINISTRADOR"] },
-      { label: 'Agregar Horario', link: '/dashboard/agregarhorario', icon: 'bi bi-calendar', roles: ["DENTISTA"] },
-      { label: 'Gestion de citas', link: '/dashboard/gestioncitas', icon: 'bi bi-bandaid', roles: ["DENTISTA"] },
+      { label: 'Agregar Horario', link: '/dashboard/dentist-schedule', icon: 'bi bi-calendar', roles: ["DENTISTA"] },
+      { label: 'Gestion de citas', link: '/dashboard/assigned', icon: 'bi bi-bandaid', roles: ["DENTISTA"] },
     ];
     this.filteredMenuItems$ = this.user$.pipe(
       map(user =>

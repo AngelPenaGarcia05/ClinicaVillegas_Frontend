@@ -1,52 +1,121 @@
 <div class="historial-container">
-    <div class="titulo-historial">
-        <h1>Historial de Reservas</h1>
-    </div>
+  <div class="titulo-historial">
+    <h1>Historial de Reservas</h1>
+  </div>
+  <div class="tabla-container mb-3">
+    <form [formGroup]="formCitas">
+      <label for="fechaInicio">Fecha de inicio</label>
+      <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" formControlName="fechaInicio"
+        [class]="{'is-invalid': formCitas.get('fechaInicio')?.invalid && formCitas.get('fechaInicio')?.touched}">
+      <label for="fechaFin">Fecha de fin</label>
+      <input type="date" class="form-control" id="fechaFin" name="fechaFin" formControlName="fechaFin"
+        [class]="{'is-invalid': formCitas.get('fechaFin')?.invalid && formCitas.get('fechaFin')?.touched}">
+      <label for="estado">Estado</label>
+      <select class="form-select" id="estado" name="estado" formControlName="estado">
+        <option value="Pendiente">Pendiente</option>
+        <option value="Atendida">Atendida</option>
+        <option value="Cancelada">Cancelada</option>
+      </select>
+      <button class="btn btn-blue-color" [disabled]="!formCitas.valid" (click)="loadCitasWithParams()">Buscar</button>
+    </form>
+  </div>
+  <div class="tabla-container">
+    <table class="reservas-historial">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Dentista</th>
+          <th>Descripción</th>
+          <th>Estado</th>
+          <th>Monto</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (cita of citas; track $index) {
+        <tr>
+          <td>{{cita.id}}</td>
+          <td>
+            {{cita.dentista.apellidoPaterno}} {{cita.dentista.apellidoMaterno}},
+            {{cita.dentista.nombres}}<br>
+            <span class="dni-reserva">{{cita.dentista.telefono}}</span>
+          </td>
+          <td>
+            Tipo: {{cita.tratamiento.tipoTratamiento.nombre}}<br>
+            Tratamiento: {{cita.tratamiento.nombre}}<br>
+            Fecha: {{cita.fecha}}<br>
+            Hora: {{cita.hora}}
+          </td>
+          <td><span class="estado-reserva" [class]="cita.estado.toLowerCase()">{{cita.estado}}</span></td>
+          <td>S/.{{cita.tratamiento.costo}} PEN</td>
+          <td>
+            @if (cita.estado === 'Pendiente') {
+            <button class="btn cancelar" (click)="openModalToCancel(cita)">Cancelar</button>
+            <button class="btn reprogramar"
+              (click)="establecerHorarios(cita); openModalToReprogramar(cita)">Reprogramar</button>
+            }
+          </td>
+        </tr>
 
-    <div class="tabla-container">
-        <table class="reservas-historial">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Dentista</th>
-                    <th>Descripción</th>
-                    <th>Estado</th>
-                    <th>Monto</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (cita of citas; track $index) {
-                <tr>
-                    <td>{{cita.id}}</td>
-                    <td>
-                        {{cita.dentista.apellidoPaterno}} {{cita.dentista.apellidoMaterno}},
-                        {{cita.dentista.nombres}}<br>
-                        <span class="dni-reserva">{{cita.dentista.telefono}}</span>
-                    </td>
-                    <td>
-                        Tipo: {{cita.tratamiento.tipoTratamiento.nombre}}<br>
-                        Tratamiento: {{cita.tratamiento.nombre}}<br>
-                        Fecha: {{cita.fecha}}<br>
-                        Hora: {{cita.hora}}
-                    </td>
-                    <td><span class="estado-reserva pendiente">{{cita.estado}}</span></td>
-                    <td>S/.{{cita.tratamiento.costo}} PEN</td>
-                    <td>
-                        <button class="btn cancelar">Cancelar</button>
-                        <button class="btn reprogramar">Reprogramar</button>
-                    </td>
-                </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 
-                }
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Controles de paginación -->
-    <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
-        <button class="btn" (click)="prevPage()" [disabled]="currentPage === 0">Anterior</button>
-        <span style="align-self: center;">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
-        <button class="btn" (click)="nextPage()" [disabled]="currentPage + 1 >= totalPages">Siguiente</button>
-    </div>
+  <!-- Controles de paginación -->
+  <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+    <button class="btn" (click)="prevPage()" [disabled]="currentPage === 0">Anterior</button>
+    <span style="align-self: center;">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+    <button class="btn" (click)="nextPage()" [disabled]="currentPage + 1 >= totalPages">Siguiente</button>
+  </div>
 </div>
+<app-modal #modalCancelacion>
+  <div modal-header>
+    <h5 class="modal-title">¿Desea cancelar la reserva?</h5>
+  </div>
+  <div modal-body>
+    @if (trackedCita) {
+    <p>La reserva para {{trackedCita.tratamiento.nombre}} con fecha {{trackedCita.fecha}} y hora {{trackedCita.hora}}
+      será cancelada.</p>
+      <form [formGroup]="formCancelacion">
+        <label for="observaciones">Observaciones</label>
+        <textarea id="observaciones" class="form-control" formControlName="observaciones"></textarea>
+      </form>
+    }
+  </div>
+  <div modal-footer>
+    <button class="btn btn-secondary" (click)="modalCancelacion.close()">Cancelar</button>
+    <button class="btn btn-primary" (click)="cancelarReserva()">Aceptar</button>
+  </div>
+</app-modal>
+
+
+<app-modal #modalReprogramar>
+  <div modal-header>
+    <h5 class="modal-title">¿Desea reprogramar la reserva?</h5>
+  </div>
+  <div modal-body>
+    <form [formGroup]="formReprogramar">
+      <label class="form-label" for="fecha">Fecha:</label>
+      <span class="text-dark fw-bold ms-2">{{formReprogramar.get('fecha')?.value}}</span>
+      <app-datepicker [disabledDates]="disabledDates" [minDate]="minDate" [maxDate]="maxDate"
+        (dateSelected)="handleDateSelected($event)"></app-datepicker>
+      <small class="form-text text-danger"
+        [hidden]="formReprogramar.get('fecha')?.valid || !formReprogramar.get('fecha')?.touched">La
+        fecha es obligatoria.</small>
+      <label class="form-label" for="hora">Hora:</label>
+      <input type="time" class="form-control" id="hora" name="hora" formControlName="hora"
+        [class]="{'is-invalid': formReprogramar.get('hora')?.invalid && formReprogramar.get('hora')?.touched}">
+      <small class="form-text text-danger"
+        [hidden]="!formReprogramar.get('hora')?.hasError('outOfRange') || !formReprogramar.get('hora')?.touched">El
+        horario de atención es de {{horarioSelected?.horaComienzo}} a {{horarioSelected?.horaFin}}</small>
+      <small class="form-text text-danger mt-1" [hidden]="!formReprogramar.get('hora')?.hasError('citaInvalid')">Ya hay
+        un cita reservada en este horario</small>
+    </form>
+  </div>
+  <div modal-footer>
+    <button class="btn btn-secondary" (click)="modalReprogramar.close()">Cancelar</button>
+    <button class="btn btn-primary" [disabled]="formReprogramar.invalid && activarBoton"
+      (click)="reprogramarReserva()">Reprogramar</button>
+  </div>
+</app-modal>
