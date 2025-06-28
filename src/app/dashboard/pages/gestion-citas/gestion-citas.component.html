@@ -16,7 +16,7 @@
         <option value="Atendida">Atendida</option>
         <option value="Cancelada">Cancelada</option>
       </select>
-      <button class="btn" [disabled]="!formCitas.valid" (click)="loadCitasWithParams()">Buscar</button>
+      <button class="btn btn-blue-color" [disabled]="!formCitas.valid" (click)="loadCitasWithParams()">Buscar</button>
     </form>
   </div>
   <div class="tabla-container">
@@ -55,9 +55,9 @@
             <button class="btn cancelar" (click)="openModalToCancel(cita)">Cancelar</button>
             <button class="btn reprogramar"
               (click)="establecerHorarios(cita); openModalToReprogramar(cita)">Reprogramar</button>
-              @if (yaHaPasadoFechaHora(cita.fecha, cita.hora)) {
-                <button class="btn atender" (click)="openModalToAtender(cita)">Atender</button>
-              }
+            @if (yaHaPasadoFechaHora(cita.fecha, cita.hora)) {
+            <button class="btn atender" (click)="openModalToAtender(cita)">Atender</button>
+            }
             }
           </td>
         </tr>
@@ -68,11 +68,8 @@
   </div>
 
   <!-- Controles de paginación -->
-  <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
-    <button class="btn" (click)="prevPage()" [disabled]="currentPage === 0">Anterior</button>
-    <span style="align-self: center;">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
-    <button class="btn" (click)="nextPage()" [disabled]="currentPage + 1 >= totalPages">Siguiente</button>
-  </div>
+  <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChange)="onPageChange($event)">
+  </app-pagination>
 </div>
 <app-modal #modalCancelacion>
   <div modal-header>
@@ -130,8 +127,8 @@
   </div>
   <div modal-body>
     @if (trackedCita) {
-      <p>La reserva para {{trackedCita.tratamiento.nombre}} con fecha {{trackedCita.fecha}} y hora {{trackedCita.hora}}
-        será atendida.</p>
+    <p>La reserva para {{trackedCita.tratamiento.nombre}} con fecha {{trackedCita.fecha}} y hora {{trackedCita.hora}}
+      será atendida.</p>
     }
   </div>
   <div modal-footer>

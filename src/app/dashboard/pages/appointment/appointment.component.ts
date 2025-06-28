@@ -32,7 +32,7 @@ import { fechaHoraNoPasadaValidator } from '../../../shared/validators/before-da
 })
 export class AppointmentComponent implements OnInit {
   ocultarBotonReserva: boolean = false;
-  user$!: Observable<Usuario>;
+  user$!: Observable<Usuario | null>;
 
   //variables para la consulta de datos
   tratamientos!: Observable<Tratamiento[]>;

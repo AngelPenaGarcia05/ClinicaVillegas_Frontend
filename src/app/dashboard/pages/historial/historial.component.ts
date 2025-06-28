@@ -13,10 +13,11 @@ import { HorarioService } from '../../services/horario.service';
 import { Horario } from '../../../shared/interfaces/horario';
 import { timeRangeValidator } from '../../../shared/validators/time-range.validator';
 import { citaValidator } from '../../../shared/validators/cita.validator';
+import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-historial',
-  imports: [ReactiveFormsModule, DatepickerComponent, ModalComponent],
+  imports: [ReactiveFormsModule, DatepickerComponent, ModalComponent, PaginationComponent],
   templateUrl: './historial.component.html',
   styleUrl: './historial.component.css'
 })
@@ -32,7 +33,7 @@ export class HistorialComponent {
   toastrService = inject(ToastrService);
   horarioService = inject(HorarioService);
   userId!: number;
-  user$: Observable<Usuario>;
+  user$: Observable<Usuario | null>;
   horarios!: Observable<Horario[]>
 
   minDate: Date = new Date(new Date().setHours(0, 0, 0, 0));
@@ -99,19 +100,15 @@ export class HistorialComponent {
     });
   }
 
-  nextPage(): void {
-    if (this.currentPage < this.totalPages - 1) {
-      this.currentPage++;
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    if (this.formCitas.valid) {
+      this.loadCitasWithParams();
+    } else {
       this.loadCitas();
     }
   }
 
-  prevPage(): void {
-    if (this.currentPage > 0) {
-      this.currentPage--;
-      this.loadCitas();
-    }
-  }
   reprogramarReserva() {
     this.citaService.reprogramarCita(
       this.trackedCita.id,
@@ -123,9 +120,9 @@ export class HistorialComponent {
       next: (data) => {
         this.toastrService.success("Cita reprogramada con éxito");
         this.modalReprogramar.close();
-        if(this.formCitas.valid){
+        if (this.formCitas.valid) {
           this.loadCitasWithParams();
-        }else{
+        } else {
           this.loadCitas();
         }
       },
@@ -139,9 +136,9 @@ export class HistorialComponent {
     this.citaService.eliminarCita(this.trackedCita.id, { observaciones: this.formCancelacion.get('observaciones')?.value }).subscribe({
       next: (data) => {
         this.toastrService.success("Cita cancelada con éxito");
-        if(this.formCitas.valid){
+        if (this.formCitas.valid) {
           this.loadCitasWithParams();
-        }else{
+        } else {
           this.loadCitas();
         }
       },

@@ -101,9 +101,7 @@ section{
 }
 .footer {
     background-color: var(--blue-color-light);
-    .clinic, .contact, .about, .treatment{
-        width: 25%;
-    }
+    
     .social-networks>div{
         width: 50px;
         height: 50px;

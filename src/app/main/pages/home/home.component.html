@@ -58,7 +58,8 @@
         </div>
     </div>
     <div class="mt-5 mb-5 d-flex align-items-center justify-content-center">
-        <a routerLink="/home/treatments" class="rounded-4 text-blue-color-light fw-bold btn btn-gradient">Mostrar más</a>
+        <a routerLink="/home/treatments" class="rounded-4 text-blue-color-light fw-bold btn btn-gradient">Mostrar
+            más</a>
     </div>
 </section>
 
@@ -150,7 +151,8 @@
     <app-accordion [accordionItems]="accordionItems"></app-accordion>
 
     <div class="text-center mt-4">
-        <button class="rounded-4 text-blue-color-light fw-bold btn btn-gradient" (click)="redirectToBlog()">Descubra más</button>
+        <button class="rounded-4 text-blue-color-light fw-bold btn btn-gradient" (click)="redirectToBlog()">Descubra
+            más</button>
     </div>
 </section>
 
@@ -198,58 +200,75 @@
     </div>
 </section>
 
-<div id="contactos" class="footer d-flex justify-content-between gap-5 py-3 px-5">
-    <div class="clinic d-flex flex-column gap-3 p-1">
-        <h2 class="mt-2 fs-2 text-blue-color fw-bold">Clínica Dental Villegas</h2>
-        <p>Ofrecemos el mejor servicio para tu salud dental en la ciudad de Ica</p>
-        <div class="d-flex gap-3 social-networks">
-            <div class="d-flex align-items-center justify-content-center rounded-3">
-                <a class="text-blue-color-light" href="">
-                    <i class="bi bi-twitter"></i>
-                </a>
+<div id="contactos" class="footer container-fluid py-4 px-3 px-md-5">
+    <div class="row gy-4">
+        <!-- Clínica -->
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="clinic d-flex flex-column gap-2">
+                <h2 class="fs-4 fs-md-3 text-blue-color fw-bold">Clínica Dental Villegas</h2>
+                <p>Ofrecemos el mejor servicio para tu salud dental en la ciudad de Ica</p>
+                <div class="d-flex gap-3 social-networks">
+                    <div class="d-flex align-items-center justify-content-center rounded-3">
+                        <a class="text-blue-color-light" href="">
+                            <i class="bi bi-twitter"></i>
+                        </a>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center rounded-3">
+                        <a class="text-blue-color" href="https://www.facebook.com/profile.php?id=61559745507589">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center rounded-3">
+                        <a class="text-blue-color-light fw-bold" href="">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="d-flex align-items-center justify-content-center rounded-3">
-                <a class="text-blue-color" href="https://www.facebook.com/profile.php?id=61559745507589">
-                    <i class="bi bi-facebook "></i>
-                </a>
+        </div>
+
+        <!-- Tratamientos -->
+        <div class="col-6 col-md-3">
+            <div class="treatment d-flex flex-column">
+                <h3 class="text-blue-color fs-5 fw-bold mb-3">Tratamientos</h3>
+                <p>Ortodoncia</p>
+                <p>Endodoncia</p>
+                <p>Cirugías</p>
+                <p>Estética Dental</p>
             </div>
-            <div class="d-flex align-items-center justify-content-center rounded-3">
-                <a class="rounded-4 text-blue-color-light fw-bold" href="">
-                    <i class="bi bi-instagram"></i>
-                </a>
+        </div>
+
+        <!-- Acerca de -->
+        <div class="col-6 col-md-3">
+            <div class="about d-flex flex-column">
+                <h3 class="text-blue-color fs-5 fw-bold mb-3">Acerca de</h3>
+                <p>Consultas</p>
+                <p>Soporte</p>
+                <p>Citas</p>
             </div>
         </div>
-    </div>
-    <div class="treatment d-flex flex-column justify-content-start align-items-start pt-3">
-        <h3 class="mb-3 text-blue-color fs-2 fw-bold">Tratamientos</h3>
-        <p>Ortodoncia</p>
-        <p>Endodoncia</p>
-        <p>Cirugías</p>
-        <p>Estética Dental</p>
-    </div>
-    <div class="about d-flex flex-column justify-content-start align-items-start pt-3">
-        <h3 class="mb-3 text-blue-color fs-2 fw-bold">Acerca de</h3>
-        <p>Consultas</p>
-        <p>Soporte</p>
-        <p>Citas</p>
-    </div>
-    <div class="contact d-flex flex-column justify-content-start align-items-start pt-3">
-        <h3 class="mb-3 text-blue-color fs-2 fw-bold">Contacto</h3>
-        <div class="d-flex align-items-center gap-3">
-            <i class="bi bi-envelope-at-fill text-blue-color fw-bold"></i>
-            <p>chemavillegas06&#64;gmail.com</p>
-        </div>
-        <div class="d-flex align-items-center gap-3">
-            <i class="bi bi-telephone text-blue-color fw-bold"></i>
-            <u>921 785 848</u>
-        </div>
-        <div class="d-flex align-items-center gap-3">
-            <i class="bi bi-clock"></i>
-            <p>Lun-Sab 9:00-20:00</p>
-        </div>
-        <div class="d-flex align-items-center gap-3">
-            <i class="bi bi-geo-alt text-blue-color fw-bold"></i>
-            <p>C.C GOLD CENTER 2°do Piso (calle Lima)</p>
+
+        <!-- Contacto -->
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="contact d-flex flex-column">
+                <h3 class="text-blue-color fs-5 fw-bold mb-3">Contacto</h3>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-envelope-at-fill text-blue-color fw-bold"></i>
+                    <p class="mb-0">chemavillegas06&#64;gmail.com</p>
+                </div>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-telephone text-blue-color fw-bold"></i>
+                    <u class="mb-0">921 785 848</u>
+                </div>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-clock"></i>
+                    <p class="mb-0">Lun-Sab 9:00-20:00</p>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-geo-alt text-blue-color fw-bold"></i>
+                    <p class="mb-0">C.C GOLD CENTER 2°do Piso (calle Lima)</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

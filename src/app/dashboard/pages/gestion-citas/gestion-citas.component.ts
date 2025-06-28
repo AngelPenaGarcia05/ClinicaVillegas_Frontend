@@ -14,11 +14,12 @@ import { timeRangeValidator } from '../../../shared/validators/time-range.valida
 import { citaValidator } from '../../../shared/validators/cita.validator';
 import { DatepickerComponent } from '../../components/datepicker/datepicker.component';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
+import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-gestion-citas',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ModalComponent, DatepickerComponent],
+  imports: [CommonModule, ReactiveFormsModule, ModalComponent, DatepickerComponent, PaginationComponent],
   templateUrl: './gestion-citas.component.html',
   styleUrl: './gestion-citas.component.css'
 })
@@ -34,7 +35,7 @@ export class GestionCitasComponent {
   toastrService = inject(ToastrService);
   horarioService = inject(HorarioService);
   dentistaId!: number;
-  user$: Observable<Usuario>;
+  user$: Observable<Usuario | null>;
   horarios!: Observable<Horario[]>
 
   minDate: Date = new Date(new Date().setHours(0, 0, 0, 0));
@@ -56,9 +57,9 @@ export class GestionCitasComponent {
   trackedCita!: Cita;
 
   formCitas = new FormGroup({
-    fechaInicio: new FormControl('2024-11-01', Validators.required),
-    fechaFin: new FormControl('2024-12-12', [Validators.required]),
-    estado: new FormControl('Pendiente', Validators.required),
+    fechaInicio: new FormControl('', Validators.required),
+    fechaFin: new FormControl('', [Validators.required]),
+    estado: new FormControl('', Validators.required),
   });
   formReprogramar: FormGroup;
   formCancelacion: FormGroup;
@@ -91,7 +92,7 @@ export class GestionCitasComponent {
     });
   }
   loadCitasWithParams() {
-    if(this.formCitas.valid){
+    if (this.formCitas.valid) {
       this.citaService.buscarCitas({ dentistaId: this.dentistaId, fechaInicio: this.formCitas.get('fechaInicio')?.value ?? '2024-11-01', fechaFin: this.formCitas.get('fechaFin')?.value ?? '2024-12-12', estado: this.formCitas.get('estado')?.value ?? 'Pendiente' }, false, this.currentPage, this.pageSize).subscribe({
         next: (response) => {
           const responseFormat = response as Pageable<Cita>;
@@ -105,19 +106,15 @@ export class GestionCitasComponent {
     }
   }
 
-  nextPage(): void {
-    if (this.currentPage < this.totalPages - 1) {
-      this.currentPage++;
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    if (this.formCitas.valid) {
+      this.loadCitasWithParams();
+    } else {
       this.loadCitas();
     }
   }
 
-  prevPage(): void {
-    if (this.currentPage > 0) {
-      this.currentPage--;
-      this.loadCitas();
-    }
-  }
   reprogramarReserva() {
     this.citaService.reprogramarCita(
       this.trackedCita.id,
@@ -129,9 +126,9 @@ export class GestionCitasComponent {
       next: () => {
         this.toastrService.success("Cita reprogramada con éxito");
         this.modalReprogramar.close();
-        if(this.formCitas.valid){
+        if (this.formCitas.valid) {
           this.loadCitasWithParams();
-        }else{
+        } else {
           this.loadCitas();
         }
       },
@@ -145,9 +142,9 @@ export class GestionCitasComponent {
     this.citaService.eliminarCita(this.trackedCita.id, { observaciones: this.formCancelacion.get('observaciones')?.value }).subscribe({
       next: () => {
         this.toastrService.success("Cita cancelada con éxito");
-        if(this.formCitas.valid){
+        if (this.formCitas.valid) {
           this.loadCitasWithParams();
-        }else{
+        } else {
           this.loadCitas();
         }
       },
@@ -161,9 +158,9 @@ export class GestionCitasComponent {
     this.citaService.atenderCita(this.trackedCita.id).subscribe({
       next: () => {
         this.toastrService.success("Cita atendida con éxito");
-        if(this.formCitas.valid){
+        if (this.formCitas.valid) {
           this.loadCitasWithParams();
-        }else{
+        } else {
           this.loadCitas();
         }
       },

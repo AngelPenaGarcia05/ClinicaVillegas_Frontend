@@ -6,6 +6,9 @@ import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { Observable } from 'rxjs';
+import { Usuario } from '../../../shared/interfaces/usuario';
+import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-dynamic-report',
@@ -16,9 +19,12 @@ import { ToastrService } from 'ngx-toastr';
 export class DynamicReportComponent {
   tipoReporte = signal<string>('table');
   toastService = inject(ToastrService);
+  authService = inject(AuthService);
 
   modalFormat = viewChild<ModalComponent>('modalFormat');
   modalConfig = viewChild<ModalComponent>('modalConfig');
+
+  user$: Observable<Usuario | null>;
 
   reportData: any[] = [];
   columnas: string[] = [];
@@ -42,6 +48,7 @@ export class DynamicReportComponent {
   agregaciones = ['conteo', 'suma', 'promedio', 'max', 'min'];
 
   constructor(private reporteService: ReportService, private fb: FormBuilder) {
+    this.user$ = this.authService.fetchUser();
     this.configForm = this.fb.group({
       filas: ['tratamiento'],
       columnas: [''],
@@ -96,8 +103,6 @@ export class DynamicReportComponent {
         dto.filtros[f.campo] = f.valor;
       }
     }
-
-
     this.reporteService.generarReporte(dto).subscribe(data => {
       this.reportData = data;
       this.columnas = Object.keys(data[0] || {});
@@ -123,19 +128,19 @@ export class DynamicReportComponent {
       borderColor: reportColors[index % reportColors.length],
       borderWidth: 1
     }));
-
     this.chartData = {
       labels: etiquetas,
       datasets: series
     };
   }
+
   descargar(formato: 'pdf' | 'excel'): void {
-  if (formato === 'pdf') {
-    this.descargarPdf();
-  } else if (formato === 'excel') {
-    this.descargarPdf();
+    if (formato === 'pdf') {
+      this.descargarPdf();
+    } else if (formato === 'excel') {
+      this.descargarExcel();
+    }
   }
-}
   descargarPdf(): void {
     const formValue = this.configForm.value;
     const dto: ReporteRequestDTO = {
@@ -150,6 +155,12 @@ export class DynamicReportComponent {
     if (!dto.filtros) {
       dto.filtros = {};
     }
+    for (const f of formValue.filtros) {
+      if (f.campo && f.valor) {
+        dto.filtros[f.campo] = f.valor;
+      }
+    }
+
 
     this.reporteService.descargarPdf(dto).subscribe({
       next: (blob: Blob) => {
@@ -159,6 +170,44 @@ export class DynamicReportComponent {
       error: (err) => {
         this.toastService.error('Error al descargar el PDF');
         console.error('Error al descargar el PDF:', err);
+      }
+    });
+  }
+  descargarExcel(): void {
+    const formValue = this.configForm.value;
+    const dto: ReporteRequestDTO = {
+      filas: [formValue.filas],
+      columnas: formValue.columnas ? [formValue.columnas] : [],
+      valor: formValue.valor,
+      agregacion: formValue.agregacion,
+      fechaDesde: formValue.fechaDesde,
+      fechaHasta: formValue.fechaHasta,
+      filtros: {}
+    };
+    if (!dto.filtros) {
+      dto.filtros = {};
+    }
+    for (const f of formValue.filtros) {
+      if (f.campo && f.valor) {
+        dto.filtros[f.campo] = f.valor;
+      }
+    }
+
+
+    this.reporteService.descargarExcel(dto).subscribe({
+      next: (response) => {
+        const blob = new Blob([response.body!], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `reporte_${new Date().toISOString().split('T')[0]}.xlsx`;
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        this.toastService.error('Error al descargar el Excel');
+        console.error('Error al descargar el Excel:', err);
       }
     });
   }

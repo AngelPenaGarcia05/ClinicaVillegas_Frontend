@@ -13,7 +13,11 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
+.btn-blue-color{
+    background-color: var(--blue-color);
+    color: white;
+    width: 100%;
+}
 h1 {
     padding: 20px;
     text-align: center;   

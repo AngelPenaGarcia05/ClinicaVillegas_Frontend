@@ -21,7 +21,7 @@ export class DentistScheduleComponent {
   horarios!: Observable<Horario[]>;
   authService = inject(AuthService);
   dentistaId!: number;
-  user$!: Observable<Usuario>;
+  user$!: Observable<Usuario | null>;
   toastService = inject(ToastrService);
 
   trackedHorario!: Horario;

@@ -14,7 +14,7 @@ import { map, Observable } from 'rxjs';
 })
 export class DashboardLayoutComponent {
 
-  user$: Observable<Usuario>;
+  user$: Observable<Usuario | null>;
   menuItems: MenuItem[] = [];
   filteredMenuItems$: Observable<MenuItem[]>;
 
@@ -26,7 +26,7 @@ export class DashboardLayoutComponent {
     this.menuItems = [
       { label: 'Reserva', link: '/dashboard/appointment', icon: 'bi bi-calendar3', roles: ["PACIENTE", 'DENTISTA', "ADMINISTRADOR"] },
       { label: 'Historial', link: '/dashboard/history', icon: 'bi bi-clock-history', roles: ["PACIENTE", "ADMINISTRADOR"] },
-      { label: 'Administrador', link: '/dashboard/administrador', icon: 'bi bi-database-fill', roles: ["ADMINISTRADOR"] },
+      { label: 'Administrador', link: '/dashboard/administrator', icon: 'bi bi-database-fill', roles: ["ADMINISTRADOR"] },
       { label: 'Reportes', link: '/dashboard/reports', icon: 'bi bi-bar-chart', roles: ["DENTISTA", "ADMINISTRADOR"] },
       { label: 'Agregar Horario', link: '/dashboard/dentist-schedule', icon: 'bi bi-calendar', roles: ["DENTISTA"] },
       { label: 'Gestion de citas', link: '/dashboard/assigned', icon: 'bi bi-bandaid', roles: ["DENTISTA"] },

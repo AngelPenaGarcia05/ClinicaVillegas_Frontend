@@ -61,13 +61,8 @@
       </tbody>
     </table>
   </div>
-
-  <!-- Controles de paginación -->
-  <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
-    <button class="btn" (click)="prevPage()" [disabled]="currentPage === 0">Anterior</button>
-    <span style="align-self: center;">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
-    <button class="btn" (click)="nextPage()" [disabled]="currentPage + 1 >= totalPages">Siguiente</button>
-  </div>
+  <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChange)="onPageChange($event)">
+  </app-pagination>
 </div>
 <app-modal #modalCancelacion>
   <div modal-header>
@@ -77,10 +72,10 @@
     @if (trackedCita) {
     <p>La reserva para {{trackedCita.tratamiento.nombre}} con fecha {{trackedCita.fecha}} y hora {{trackedCita.hora}}
       será cancelada.</p>
-      <form [formGroup]="formCancelacion">
-        <label for="observaciones">Observaciones</label>
-        <textarea id="observaciones" class="form-control" formControlName="observaciones"></textarea>
-      </form>
+    <form [formGroup]="formCancelacion">
+      <label for="observaciones">Observaciones</label>
+      <textarea id="observaciones" class="form-control" formControlName="observaciones"></textarea>
+    </form>
     }
   </div>
   <div modal-footer>

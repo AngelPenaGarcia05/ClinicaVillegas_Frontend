@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of, tap } from 'rxjs';
 import { Usuario } from '../../shared/interfaces/usuario';
 import { HttpClient } from '@angular/common/http';
 import { LoginRequest } from '../interfaces/login-request';
@@ -22,10 +22,7 @@ export class AuthService {
     if (this.initialized) return;
 
     this.initialized = true;
-    this.fetchUser().subscribe({
-      next: () => { },
-      error: () => this.currentUserSubject.next(null)
-    });
+    this.fetchUser().subscribe();
   }
 
   login(data: LoginRequest): Observable<Usuario> {
@@ -46,11 +43,15 @@ export class AuthService {
     );
   }
 
-  fetchUser(): Observable<Usuario> {
-    return this.http.get<Usuario>(`${this.BASE_PATH}/me`).pipe(
-      tap(user => this.currentUserSubject.next(user))
-    );
-  }
+  fetchUser(): Observable<Usuario | null> {
+  return this.http.get<Usuario>(`${this.BASE_PATH}/me`, { withCredentials: true }).pipe(
+    tap(user => this.currentUserSubject.next(user)),
+    catchError(() => {
+      this.currentUserSubject.next(null);
+      return of(null);
+    })
+  );
+}
   refreshAccessToken(): Observable<Usuario> {
     return this.http.post<Usuario>(`${this.BASE_PATH}/refresh`, {}).pipe(
       tap(user => this.currentUserSubject.next(user))

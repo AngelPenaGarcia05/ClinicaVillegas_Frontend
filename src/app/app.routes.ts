@@ -13,6 +13,7 @@ import { HistorialComponent } from './dashboard/pages/historial/historial.compon
 import { GestionCitasComponent } from './dashboard/pages/gestion-citas/gestion-citas.component';
 import { AppointmentComponent } from './dashboard/pages/appointment/appointment.component';
 import { DentistScheduleComponent } from './dashboard/pages/dentist-schedule/dentist-schedule.component';
+import { AdministratorComponent } from './dashboard/pages/administrator/administrator.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -36,6 +37,7 @@ export const routes: Routes = [
             { path: 'dentist-schedule', component: DentistScheduleComponent, title: 'Horarios | Clinica Dental Villegas', canActivate: [authGuard], data: { roles: ['DENTISTA'] } },
             { path: 'assigned', component: GestionCitasComponent, title: 'Gestión de citas | Clinica Dental Villegas', canActivate: [authGuard], data: { roles: ['DENTISTA'] }},
             { path: 'reports', component: DynamicReportComponent, title: 'Reportes Dinámicos | Clinica Dental Villegas', canActivate: [authGuard], data: { roles: ['DENTISTA', 'ADMINISTRADOR'] } },
+            { path: 'administrator', component: AdministratorComponent, title: 'Administrador | Clinica Dental Villegas', canActivate: [authGuard], data: { roles: ['ADMINISTRADOR'] } }
         ],
         canActivate: [authGuard], data: { roles: ['DENTISTA', 'ADMINISTRADOR', 'PACIENTE'] }
     }
