@@ -1,0 +1,37 @@
+.container-dashboard{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin: 0;
+    padding: 10px;
+    gap: 10px;
+}
+
+app-stepper{
+    width: 30%;
+}
+app-calendar{
+    width: 60%;
+}
+input.invalid{
+    border: 1px solid red !important;
+}
+.gender{
+    display: flex;
+    gap: 10px;
+    margin-block: 5px;
+}
+.btn-custom{
+    width: 100%;
+}
+@media (width <= 1024px) {
+    .container-dashboard{
+        flex-direction: column;
+    }
+    app-calendar{
+        width: 100%;
+    }
+    app-stepper{
+        width: 100%;
+    }
+}

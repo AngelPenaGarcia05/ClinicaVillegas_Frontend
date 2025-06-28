@@ -6,7 +6,7 @@
             <p class="text-muted text-blue-color">Bienvenido a la Clínica Dental Villegas</p>
         </div>
 
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="registerForm" (ngSubmit)="enviarCodigoVerificacion()">
             <div class="mb-3">
                 <label for="email" class="form-label">Correo Electrónico</label>
                 <input type="email" id="email" class="form-control"
@@ -28,7 +28,9 @@
                 <div class="col-md-6">
                     <label for="tipodocumento" class="form-label">Tipo de documento</label>
                     <select class="form-select" formControlName="tipodocumento" id="tipodocumento">
-                        <option value="DNI">DNI</option>
+                        @for (tipodocumento of tiposDocumento | async; track $index) {
+                        <option value="{{tipodocumento.acronimo}}">{{tipodocumento.nombre}}</option>
+                        }
                     </select>
                 </div>
                 <div class="col-md-6">
@@ -65,9 +67,9 @@
                 </div>
             </div>
 
-            @if (mostrarBotonDni()) {
+            @if (mostrarBotonDni) {
             <div class="d-grid mb-3">
-                <button type="button" class="btn btn-outline-info" (click)="obtenerNombresApellidos()"
+                <button type="button" class="btn bg-blue-color" (click)="obtenerNombresApellidos()"
                     [disabled]="documentControl?.invalid">
                     Obtener Nombres y Apellidos
                 </button>
@@ -78,7 +80,7 @@
                 <label for="nms" class="form-label">Nombres</label>
                 <input id="nms" type="text" class="form-control"
                     [class.is-invalid]="namesControl?.invalid && (namesControl?.touched || namesControl?.dirty)"
-                    formControlName="nombres" placeholder="Ingresa tus nombres" [readonly]="mostrarBotonDni()">
+                    formControlName="nombres" placeholder="Ingresa tus nombres" [readonly]="mostrarBotonDni">
                 @if (namesControl?.invalid && (namesControl?.touched || namesControl?.dirty)) {
                 <div class="invalid-feedback">Requerido</div>
                 }
@@ -90,7 +92,7 @@
                     <input id="alp" type="text" class="form-control"
                         [class.is-invalid]="lastName1Control?.invalid && (lastName1Control?.touched || lastName1Control?.dirty)"
                         formControlName="apellidoPaterno" placeholder="Ingresa tu apellido"
-                        [readonly]="mostrarBotonDni()">
+                        [readonly]="mostrarBotonDni">
                     @if (lastName1Control?.invalid && (lastName1Control?.touched || lastName1Control?.dirty)) {
                     <div class="invalid-feedback">Requerido</div>
                     }
@@ -100,7 +102,7 @@
                     <input id="alm" type="text" class="form-control"
                         [class.is-invalid]="lastName2Control?.invalid && (lastName2Control?.touched || lastName2Control?.dirty)"
                         formControlName="apellidoMaterno" placeholder="Ingresa tu apellido"
-                        [readonly]="mostrarBotonDni()">
+                        [readonly]="mostrarBotonDni">
                     @if (lastName2Control?.invalid && (lastName2Control?.touched || lastName2Control?.dirty)) {
                     <div class="invalid-feedback">Requerido</div>
                     }
@@ -129,22 +131,21 @@
                     <input [type]="showPassword() ? 'text' : 'password'" class="form-control"
                         [class.is-invalid]="confirmPasswordControl?.invalid && (confirmPasswordControl?.touched || confirmPasswordControl?.dirty)"
                         formControlName="confirmPassword" id="confirmPassword" placeholder="Confirmar contraseña">
-                    @if (confirmPasswordControl?.invalid && (confirmPasswordControl?.touched ||
-                    confirmPasswordControl?.dirty)) {
                     <div class="invalid-feedback">
-                        @if (confirmPasswordControl?.errors?.['required']) {
-                        <span>Requerido</span>
-                        }
                         @if (registerForm.errors?.['passwordMismatch']) {
-                        <span>Las contraseñas no coinciden</span>
+                        <span>Las contraseñas no coinciden.</span>
+                        }
+                        @if (confirmPasswordControl?.invalid && (confirmPasswordControl?.touched ||confirmPasswordControl?.dirty)) {
+                        @if (confirmPasswordControl?.errors?.['required']) {
+                        <span>Requerido.</span>
+                        }
                         }
                     </div>
-                    }
                 </div>
             </div>
-
+            
             <div>
-                <button type="button" (click)="switchPasswordVisibility()" class="w-100 btn btn-info">
+                <button type="button" (click)="switchPasswordVisibility()" class="w-100 btn bg-blue-color">
                     <i [class]="showPassword() ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
                 </button>
             </div>
@@ -154,15 +155,15 @@
                 <div class="btn-group w-100" role="group">
                     <input type="radio" class="btn-check" formControlName="sexo" id="masculino" value="MASCULINO"
                         checked>
-                    <label class="btn btn-outline-info" for="masculino">Masculino</label>
+                    <label class="btn bg-blue-color" for="masculino">Masculino</label>
 
                     <input type="radio" class="btn-check" formControlName="sexo" id="femenino" value="FEMENINO">
-                    <label class="btn btn-outline-info" for="femenino">Femenino</label>
+                    <label class="btn bg-blue-color" for="femenino">Femenino</label>
                 </div>
             </div>
 
             <div class="d-grid mb-3">
-                <button type="submit" class="btn btn-info py-2" [disabled]="registerForm.invalid">
+                <button type="submit" class="btn bg-blue-color py-2" [disabled]="registerForm.invalid">
                     Registrar
                 </button>
             </div>
@@ -175,3 +176,21 @@
         </form>
     </div>
 </div>
+<app-modal #modal>
+    <div modal-header>
+        <h5 class="modal-title">Ingrese el código de verificación</h5>
+    </div>
+    <div modal-body>
+        <p>Hemos enviado un código al correo que nos brindó: {{registerForm.get('email')?.value}}. Porfavor ingrese el
+            código enviado para poder registrarse</p>
+        <label for="codigo-verificacion">Código</label>
+        <input id="codigo-verificacion" class="form-control" [formControl]="codigoControl" type="text">
+    </div>
+    <div modal-footer>
+        <button type="button" class="btn btn-secondary" (click)="modal.close()">Cerrar</button>
+        <button type="button" class="btn btn-primary" [disabled]="registerForm.get('codigoControl')?.invalid"
+            (click)="verificarCodigo()">
+            Enviar
+        </button>
+    </div>
+</app-modal>

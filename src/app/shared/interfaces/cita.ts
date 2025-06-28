@@ -2,8 +2,6 @@ import { Dentista } from "./dentista";
 import { TipoDocumento } from "./tipo-documento";
 import { Tratamiento } from "./tratamiento";
 
-
-
 export interface Cita {
     id: number;
 
@@ -25,4 +23,5 @@ export interface Cita {
     dentista: Dentista;
     usuarioId: number;
     tratamiento: Tratamiento;
+    observaciones: string;
 }

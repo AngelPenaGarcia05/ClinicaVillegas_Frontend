@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { ReporteRequestDTO } from '../interfaces/reporte-request';
 import { Observable } from 'rxjs';
 
@@ -18,5 +18,8 @@ export class ReportService {
   }
   descargarPdf(dto: ReporteRequestDTO): Observable<Blob> {
     return this.http.post(`${this.API_URL}/pdf`, dto, {responseType: 'blob'});
+  }
+  descargarExcel(dto: ReporteRequestDTO): Observable<HttpResponse<Blob>> {
+    return this.http.post(`${this.API_URL}/excel`, dto, {responseType: 'blob', observe: 'response'});
   }
 }

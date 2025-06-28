@@ -1,22 +1,129 @@
 <div class="container-fluid py-4">
-    <div class="row mb-3 align-items-center">
-        <div class="col-12 col-md-6">
-            <h4 class="mb-2 mb-md-0">Reportes Dinámicos</h4>
+    <!-- Card de título -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-body py-2">
+            <h4 class="card-title mb-0">Reportes Dinámicos</h4>
         </div>
-        <div class="col-12 col-md-6 text-md-end">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-primary mb-2 mb-md-0" (click)="modalFormat.open()">
-                    <i class="bi bi-file-earmark-text"></i> Tipo
-                </button>
-                <button type="button" class="btn btn-outline-secondary mb-2 mb-md-0" (click)="modalConfig.open()">
-                    <i class="bi bi-gear"></i> Configuración
-                </button>
-                <button type="button" class="btn btn-outline-success mb-2 mb-md-0" (click)="modalExport.open()">
-                    <i class="bi bi-download"></i> Exportar
-                </button>
+    </div>
+
+    <!-- Card de tipo de reporte y exportación -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-body py-2">
+            <div class="row g-2 align-items-center">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        <span class="me-2 small">Tipo de reporte:</span>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-primary btn-sm"
+                                [class.active]="tipoReporte() === 'table'" (click)="setTipoReporte('table')">
+                                <i class="bi bi-table"></i> Tabla
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm"
+                                [class.active]="tipoReporte() === 'chart'" (click)="setTipoReporte('chart')">
+                                <i class="bi bi-bar-chart"></i> Gráfico
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <button type="button" class="btn btn-outline-success btn-sm" (click)="modalExport.open()">
+                        <i class="bi bi-download"></i> Exportar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Card de configuración principal -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-body py-2">
+            <form [formGroup]="configForm" class="row g-2">
+                <!-- Primera fila de controles -->
+                <div class="col-6 col-md-3">
+                    <label class="form-label small mb-1">Filas</label>
+                    <select class="form-select form-select-sm" formControlName="filas">
+                        @for (campo of camposDisponibles; track $index) {
+                        <option [value]="campo.valor">{{ campo.titulo }}</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label class="form-label small mb-1">Columnas</label>
+                    <select class="form-select form-select-sm" formControlName="columnas">
+                        @for (campo of camposDisponibles; track $index) {
+                        <option [value]="campo.valor">{{ campo.titulo }}</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label class="form-label small mb-1">Valor</label>
+                    <select class="form-select form-select-sm" formControlName="valor">
+                        @for (campo of camposNumericos; track $index){
+                        <option [value]="campo">{{ campo }}</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label class="form-label small mb-1">Agregación</label>
+                    <select class="form-select form-select-sm" formControlName="agregacion">
+                        @for (tipo of agregaciones; track $index) {
+                        <option [value]="tipo">{{ tipo }}</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Segunda fila de controles -->
+                <div class="col-6 col-md-4">
+                    <label class="form-label small mb-1">Fecha desde</label>
+                    <input type="date" class="form-control form-control-sm" formControlName="fechaDesde" />
+                </div>
+
+                <div class="col-6 col-md-4">
+                    <label class="form-label small mb-1">Fecha hasta</label>
+                    <input type="date" class="form-control form-control-sm" formControlName="fechaHasta" />
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <button type="button" class="btn btn-primary btn-sm w-100 mt-md-2" (click)="cargarReporte()">
+                        Aplicar configuración
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Card de filtros avanzados -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-body py-2">
+            <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
+                <span class="fw-bold small">Filtros avanzados:</span>
+                <button type="button" class="btn btn-outline-primary btn-sm ms-auto" (click)="addFiltro()">
+                    <i class="bi bi-plus"></i> Agregar filtro
+                </button>
+            </div>
+
+            <div class="d-flex flex-column gap-2">
+                @for (filtro of filtrosFormGroups; track $index; let i = $index) {
+                <div [formGroup]="filtro" class="d-flex gap-2 align-items-center">
+                    <select class="form-select form-select-sm flex-grow-1" formControlName="campo">
+                        @for (campo of camposDisponibles; track $index) {
+                        <option [value]="campo.valor">{{ campo.titulo }}</option>
+                        }
+                    </select>
+                    <input type="text" class="form-control form-control-sm flex-grow-1" placeholder="Valor"
+                        formControlName="valor" />
+                    <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeFiltro(i)">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+
     @if (tipoReporte() == 'table') {
     <div class="card">
         <div class="card-body">
@@ -53,97 +160,6 @@
     }
 </div>
 
-
-<app-modal #modalFormat>
-    <div modal-header>
-        <h5 class="modal-title">Tipo de información</h5>
-    </div>
-    <div modal-body>
-        <div class="btn-group d-flex justify-content-center" role="group">
-            <button type="button" class="btn btn-outline-primary mb-2 mb-md-0" (click)="setTipoReporte('table')">
-                <i class="bi bi-table"></i> Tabla
-            </button>
-            <button type="button" class="btn btn-outline-secondary mb-2 mb-md-0" (click)="setTipoReporte('chart')">
-                <i class="bi bi-bar-chart"></i> Gráfico
-            </button>
-        </div>
-    </div>
-    <div modal-footer>
-        <button type="button" class="btn btn-secondary" (click)="modalFormat.close()">Cerrar</button>
-    </div>
-</app-modal>
-<app-modal #modalConfig>
-    <div modal-header>
-        <h5 class="modal-title">Configuración</h5>
-    </div>
-
-    <div modal-body>
-        <form [formGroup]="configForm">
-            <div class="mb-3">
-                <label>Filas</label>
-                <select class="form-select" formControlName="filas">
-                    @for (campo of camposDisponibles; track $index) {
-                    <option [value]="campo.valor">{{ campo.titulo }}</option>
-                    }
-                </select>
-            </div>
-            <div class="mb-3">
-                <label>Columna</label>
-                <select class="form-select" formControlName="columnas">
-                    @for (campo of camposDisponibles; track $index) {
-                    <option [value]="campo.valor">{{ campo.titulo }}</option>
-                    }
-                </select>
-            </div>
-            <div class="mb-3">
-                <label>Valor</label>
-                <select class="form-select" formControlName="valor">
-                    @for (campo of camposNumericos; track $index){
-                    <option [value]="campo">{{ campo }}</option>
-                    }
-                </select>
-            </div>
-            <div class="mb-3">
-                <label>Agregación</label>
-                <select class="form-select" formControlName="agregacion">
-                    @for (tipo of agregaciones; track $index) {
-                    <option [value]="tipo">{{ tipo }}</option>
-                    }
-                </select>
-            </div>
-            <div class="mb-3 row">
-                <div class="col">
-                    <label>Fecha desde</label>
-                    <input type="date" class="form-control" formControlName="fechaDesde" />
-                </div>
-                <div class="col">
-                    <label>Fecha hasta</label>
-                    <input type="date" class="form-control" formControlName="fechaHasta" />
-                </div>
-            </div>
-            <div class="mb-3">
-                <label>Filtros</label>
-                @for (filtro of filtrosFormGroups; track $index; let i = $index) {
-                    <div [formGroup]="filtro" class="d-flex gap-2 mb-2">
-                        <select class="form-select" formControlName="campo">
-                            @for (campo of camposDisponibles; track $index) {
-                                <option [value]="campo">{{ campo }}</option>
-                            }
-                        </select>
-                        <input type="text" class="form-control" placeholder="Valor" formControlName="valor" />
-                        <button type="button" class="btn btn-danger" (click)="removeFiltro(i)">×</button>
-                    </div>
-                }
-                <button type="button" class="btn btn-outline-primary" (click)="addFiltro()">Agregar filtro</button>
-            </div>
-        </form>
-    </div>
-
-    <div modal-footer>
-        <button type="button" class="btn btn-secondary" (click)="modalConfig.close()">Cerrar</button>
-        <button type="button" class="btn btn-primary" (click)="cargarReporte()">Aplicar</button>
-    </div>
-</app-modal>
 <app-modal #modalExport>
     <div modal-header>
         <h5 class="modal-title">Exportar Reporte</h5>

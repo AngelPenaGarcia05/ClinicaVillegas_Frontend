@@ -11,6 +11,5 @@ import { AuthService } from './auth/services/auth.service';
 export class AppComponent {
   title = 'CLinica_Frontend';
   constructor(private authService: AuthService){
-    authService.initUser();
   }
 }

@@ -1,0 +1,97 @@
+<section class="mb-5">
+  <h4 class="fw-bold">Tipo de documento</h4>
+
+  <div class="d-flex justify-content-between mb-3">
+    <form [formGroup]="busquedaForm" class="w-50">
+      <input type="text" class="form-control" formControlName="busqueda" (change)="onChangeTipoDocumento($event)"
+        placeholder="Buscar" />
+    </form>
+    <button class="btn btn-blue" (click)="openModalToCreate()">Agregar</button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Acrónimo</th>
+          <th colspan="2" class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (tipoDocumento of paginatedTipoDocumentos; track $index) {
+        <tr>
+          <td>{{ tipoDocumento.id }}</td>
+          <td>{{ tipoDocumento.nombre }}</td>
+          <td>{{ tipoDocumento.acronimo }}</td>
+          <td>
+            <button class="btn btn-blue" (click)="openModalUdpate(tipoDocumento)">Editar</button>
+          </td>
+          <td>
+            <button class="btn btn-blue" (click)="openModalDelete(tipoDocumento)">Eliminar</button>
+          </td>
+        </tr>
+        }
+        @if (paginatedTipoDocumentos.length === 0){
+        <tr>
+          <td colspan="5" class="text-center">No se encontraron resultados.</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <app-pagination [currentPage]="currentPageTipoDocumento" [totalPages]="totalPagesTipoDocumento"
+    (pageChange)="onPageChangeTipoDocumento($event)"></app-pagination>
+
+  <app-modal #modal>
+    <div modal-header>
+      <h4>{{ accionFormulario }} tipo de documento</h4>
+    </div>
+    <div modal-body>
+      <form [formGroup]="tipoDocumentoForm">
+        <div class="form-group mb-3">
+          <label for="nombre" class="form-label">Nombre</label>
+          <input type="text" class="form-control" id="nombre" formControlName="nombre" [class.is-invalid]="
+              tipoDocumentoForm.get('nombre')?.invalid &&
+              tipoDocumentoForm.get('nombre')?.touched
+            " placeholder="Nombre" />
+        </div>
+        <div class="form-group mb-3">
+          <label for="acronimo" class="form-label">Acrónimo</label>
+          <input type="text" class="form-control" id="acronimo" formControlName="acronimo" [class.is-invalid]="
+              tipoDocumentoForm.get('acronimo')?.invalid &&
+              tipoDocumentoForm.get('acronimo')?.touched
+            " placeholder="Acrónimo" />
+        </div>
+      </form>
+    </div>
+    <div modal-footer>
+      <button type="button" class="btn btn-blue" (click)="modal.close()">Cancelar</button>
+      <button type="button" class="btn btn-blue ms-2" [disabled]="tipoDocumentoForm.invalid"
+        (click)="accionFormulario.trim().startsWith('Agregar') ? registroTipoDocumento() : actualizarTipoDocumento(trackedTipoDocumento.id)">
+        {{ accionFormulario.trim().startsWith('Agregar') ? 'Crear' : 'Actualizar' }}
+      </button>
+    </div>
+  </app-modal>
+
+  <!-- Modal Eliminar -->
+  <app-modal #modalDelete>
+    <div modal-header>
+      <h4>{{ accionFormulario }} tipo de documento</h4>
+    </div>
+    <div modal-body>
+      @if (trackedTipoDocumento) {
+      <p>
+        ¿Está seguro de eliminar el tipo de documento
+        "{{ trackedTipoDocumento.nombre }}"?
+      </p>
+      }
+    </div>
+    <div modal-footer>
+      <button type="button" class="btn btn-blue" (click)="modalDelete.close()">Cancelar</button>
+      <button type="button" class="btn btn-blue ms-2" (click)="eliminarTipoDocumento()">Eliminar</button>
+    </div>
+  </app-modal>
+</section>

@@ -15,7 +15,10 @@ export class NavbarComponent {
 
   navItems = input<NavItem[]>();
   authService = inject(AuthService);
-  user$ = this.authService.currentUser$;
+  user$!: Observable<Usuario | null>;
+  constructor() {
+    this.user$ = this.authService.fetchUser();
+  }
 }
 
 export interface NavItem {

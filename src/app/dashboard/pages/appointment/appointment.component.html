@@ -1,0 +1,141 @@
+<div class="container-dashboard">
+    <app-stepper #stepper [formGroup]="reservaForm" [formTracked]="reservaForm">
+        <ng-template #step>
+            <div formGroupName="tipo">
+                <label for="tipo-tratamiento-label" class="form-label">Selecciona un tipo de tratamiento:</label>
+                <select id="tipo-tratamiento-label" class="form-select" (change)="buscarTipoTratamiento($event)"
+                    formControlName="tipoTratamiento" aria-label="Default select example">
+                    @for (tipoTratamiento of tiposTratamientos | async; track $index) {
+                    <option [value]="tipoTratamiento.id">{{ tipoTratamiento.nombre }}</option>
+                    }
+                </select>
+
+                <label for="tratamiento-label" class="form-label mt-3">Selecciona un tratamiento:</label>
+                <select id="tratamiento-label" class="form-select" formControlName="tratamientoId">
+                    @for (tratamiento of tratamientos | async; track $index) {
+                    <option [value]="tratamiento.id">{{ tratamiento.nombre }} ({{
+                        convertirDuracionAMinutos(tratamiento.duracion) }} mins)</option>
+                    }
+                </select>
+
+                <label for="especialidad-label" class="form-label mt-3">Selecciona una especialidad:</label>
+                <select id="especialidad-label" class="form-select" formControlName="especialidad"
+                    (change)="buscarDentistaPorEspecialidad($event)" aria-label="Default select example">
+                    @for (especialidad of especialidades | async; track $index) {
+                    <option [value]="especialidad">{{ especialidad }}</option>
+                    }
+                </select>
+
+                <label for="medico-label" class="form-label mt-3">Selecciona un dentista:</label>
+                <select id="medico-label" class="form-select" formControlName="dentistaId"
+                    (change)="establecerHorariosPorDentista($event)" aria-label="Default select example">
+                    @for (dentista of dentistas | async; track $index) {
+                    <option [value]="dentista.id">{{ dentista.apellidoPaterno }} {{ dentista.apellidoMaterno }}, {{
+                        dentista.nombres }}</option>
+                    }
+                </select>
+            </div>
+        </ng-template>
+
+        <ng-template #step>
+            <div formGroupName="horario">
+                <input type="text" class="form-control" [value]="selectedDate">
+                <app-datepicker [disabledDates]="disabledDates" [minDate]="minDate" [maxDate]="maxDate"
+                    (dateSelected)="handleDateSelected($event)"></app-datepicker>
+
+                <label for="hora-label" class="form-label mt-2">Selecciona la hora:</label>
+                <input type="time" class="form-control" id="hora-label" formControlName="hora" [min]="minTimeValue"
+                    [max]="maxTimeValue"
+                    [class.is-invalid]="getError('horario.hora', 'outOfRange') || getError('horario.hora', 'citaInvalid') || getError('horario', 'fechaHoraPasada')">
+
+                @if (getError('horario.hora', 'outOfRange')) {
+                <small class="form-text text-danger">
+                    El horario de atención es de {{ horarioSelected?.horaComienzo }} a {{ horarioSelected?.horaFin }}
+                </small>
+                }
+
+                @if (getError('horario.hora', 'citaInvalid')) {
+                <small class="form-text text-danger mt-1">Ya hay un cita reservada en este horario</small>
+                }
+
+                @if (getError('horario', 'fechaHoraPasada')) {
+                <small class="form-text text-danger mt-1">La fecha y hora seleccionadas ya pasaron</small>
+                }
+            </div>
+        </ng-template>
+
+        <ng-template #step>
+            <div formGroupName="paciente">
+                <label for="tipo-documento-label" class="form-label">Tipo de documento</label>
+                <select formControlName="tipoDocumento" class="form-select" id="tipo-documento-label"
+                    (change)="agregarValidadores($event)">
+                    @for (tipoDocumento of tiposDocumento | async; track $index) {
+                    <option [value]="tipoDocumento.acronimo">{{ tipoDocumento.nombre }}</option>
+                    }
+                </select>
+
+                <label for="dni-paciente-label" class="form-label mt-2">Número de identidad:</label>
+                <input type="text" class="form-control" id="dni-paciente-label" formControlName="numeroIdentidad"
+                    [class.is-invalid]="getError('paciente.numeroIdentidad', 'required') || getError('paciente.numeroIdentidad', 'pattern')">
+
+                @if (getError('paciente.numeroIdentidad', 'required') || getError('paciente.numeroIdentidad',
+                'pattern')) {
+                <small class="form-text text-danger">El número de identidad es obligatorio y debe ser numérico.</small>
+                }
+
+                @if (mostrarBotonDni) {
+                <button type="button" class="btn btn-primary btn-custom mt-1" (click)="obtenerNombresApellidos()"
+                    [disabled]="reservaForm.get('tipoDocumento')?.invalid || desactivarBotonDni">
+                    Obtener Nombres y Apellidos
+                </button>
+                }
+
+                <label for="nombre-paciente-label" class="form-label">Nombres del paciente:</label>
+                <input type="text" class="form-control" id="nombre-paciente-label" formControlName="nombres"
+                    [readOnly]="mostrarBotonDni" [class.is-invalid]="getError('paciente.nombres', 'required')">
+
+                @if (getError('paciente.nombres', 'required')) {
+                <small class="form-text text-danger">El nombre del paciente es obligatorio.</small>
+                }
+
+                <label for="apellidop-paciente-label" class="form-label mt-2">Apellido paterno:</label>
+                <input type="text" class="form-control" id="apellidop-paciente-label" formControlName="apellidoPaterno"
+                    [readOnly]="mostrarBotonDni" [class.is-invalid]="getError('paciente.apellidoPaterno', 'required')">
+
+                @if (getError('paciente.apellidoPaterno', 'required')) {
+                <small class="form-text text-danger">El apellido paterno es obligatorio.</small>
+                }
+
+                <label for="apellidom-paciente-label" class="form-label mt-2">Apellido materno:</label>
+                <input type="text" class="form-control" id="apellidom-paciente-label" formControlName="apellidoMaterno"
+                    [readOnly]="mostrarBotonDni" [class.is-invalid]="getError('paciente.apellidoMaterno', 'required')">
+
+                @if (getError('paciente.apellidoMaterno', 'required')) {
+                <small class="form-text text-danger">El apellido materno es obligatorio.</small>
+                }
+
+                <label for="fecha-nacimiento-label" class="form-label mt-2">Fecha de nacimiento:</label>
+                <input type="date" class="form-control" id="fecha-nacimiento-label" formControlName="fechaNacimiento"
+                    [class.is-invalid]="getError('paciente.fechaNacimiento', 'required')">
+
+                @if (getError('paciente.fechaNacimiento', 'required')) {
+                <small class="form-text text-danger">Ingrese una fecha válida.</small>
+                }
+
+                <div class="gender mt-3">
+                    <input type="radio" formControlName="sexo" id="masculino" value="MASCULINO">
+                    <label for="masculino">Masculino</label>
+                    <input type="radio" formControlName="sexo" id="femenino" value="FEMENINO">
+                    <label for="femenino">Femenino</label>
+                </div>
+            </div>
+
+            @if (!ocultarBotonReserva) {
+            <button [disabled]="reservaForm.invalid" class="btn btn-primary bt-custom" (click)="guardarReserva()">
+                Reservar
+            </button>
+            }
+        </ng-template>
+    </app-stepper>
+    <app-calendar [citas]="citas"></app-calendar>
+</div>

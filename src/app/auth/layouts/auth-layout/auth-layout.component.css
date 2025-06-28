@@ -1,8 +1,0 @@
-.object-fit-cover {
-  object-fit: cover;
-}
-@media (max-width: 992px) {
-  .col-md-12 img {
-    max-height: 50vh !important;
-  }
-}

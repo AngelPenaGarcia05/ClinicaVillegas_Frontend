@@ -6,7 +6,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { isPlatformBrowser } from '@angular/common';
-import { Cita } from '../../interfaces/cita';
+import { Cita } from '../../../shared/interfaces/cita';
 import { ToastrService } from 'ngx-toastr';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
 

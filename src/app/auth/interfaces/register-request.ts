@@ -8,5 +8,5 @@ export interface RegisterRequest{
     fechaNacimiento: string,
     telefono: string,
     sexo: string,
-    constrasena: string
+    contrasena: string
 }

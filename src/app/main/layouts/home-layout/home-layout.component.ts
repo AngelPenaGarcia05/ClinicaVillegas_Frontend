@@ -8,8 +8,7 @@ import { RouterOutlet } from '@angular/router';
   template: `
     <nav app-navbar [navItems]="navItems"></nav>
     <router-outlet></router-outlet>
-  `,
-  styleUrl: './home-layout.component.css'
+  `
 })
 export class HomeLayoutComponent {
   navItems: NavItem[] = [

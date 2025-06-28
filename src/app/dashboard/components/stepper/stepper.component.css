@@ -31,13 +31,13 @@
 }
 
 .step-circle.active{
-    background-color: var(--first-color);
+    background-color: var(--blue-color);
 }
 .step-line.active{
-    color: var(--first-color);
+    color: var(--blue-color);
 }
 .progress-bar {
-    background-color: var(--first-color);
+    background-color: var(--blue-color);
 }
 .step-content {
     padding: 16px;

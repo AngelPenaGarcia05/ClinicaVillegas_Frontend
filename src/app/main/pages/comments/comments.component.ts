@@ -6,13 +6,32 @@ import { AuthService } from '../../../auth/services/auth.service';
 import { Comentario } from '../../interfaces/comentario';
 import { map, Observable } from 'rxjs';
 import { Usuario } from '../../../shared/interfaces/usuario';
+import { QuestionComponent } from '../../components/question/question.component';
+import { AsyncPipe } from '@angular/common';
+import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 
 
 @Component({
   selector: 'app-comments',
   standalone: true,
-  imports: [ReactiveFormsModule],
-  templateUrl: './comments.component.html',
+  imports: [ReactiveFormsModule, QuestionComponent, PaginationComponent],
+  template: `
+  <div class="d-flex flex-column justify-content-center comentarios">
+    @if (userRole === 'PACIENTE') {
+    <div class="comentario-input-card card">
+        <input type="text" class="form-control input-cometario" [formControl]="preguntaPaciente"
+            placeholder="Escribe tu comentario aquí...">
+        <button class="btn btn-primary btn-comentario" (click)="comentar()" [disabled]="preguntaPaciente.invalid"
+            style="background-color: #c7f3f3; color: #146356; border: 1px solid #a0d8c3;">Comentar</button>
+    </div>
+    }
+    @for (comentario of comentarios; track $index) {
+    <app-question class="comentario-card card" [pregunta]="comentario" [disabledButton]="disabledButton" [userId]="userId"
+        [userRole]="userRole" (recargarComentarios)="loadComentarios()"></app-question>
+    }
+    <app-pagination [totalPages]="totalPages" [currentPage]="currentPage" (pageChange)="onPageChange($event)"></app-pagination>
+  </div>
+  `,
   styleUrl: './comments.component.css'
 })
 export class CommentsComponent {
@@ -22,7 +41,7 @@ export class CommentsComponent {
   toast = inject(ToastrService);
 
   comentarios: Comentario[] = [];
-  user$: Observable<Usuario>;
+  user$!: Observable<Usuario | null>;
   userRole = '';
   userId = 0;
   nombresUsuario = '';
@@ -42,18 +61,15 @@ export class CommentsComponent {
 
   constructor() {
     this.user$ = this.authService.fetchUser();
-    this.user$.pipe(
-          map(user => {
-              this.userId = user ? user.id : 0;
-              this.userRole = user ? user.rol : '';
-              this.nombresUsuario = user ? `${user.apellidoPaterno} ${user.apellidoMaterno}, ${user.nombres}` : '';
-            }
-          )
-        );
-    if (this.userRole === 'PACIENTE' || !this.userRole) {
-      this.disabledButton = true;
-    }
-    this.loadComentarios();
+    this.user$.subscribe(user => {
+      this.userId = user ? user.id : 0;
+      this.userRole = user ? user.rol : '';
+      this.nombresUsuario = user ? `${user.apellidoPaterno} ${user.apellidoMaterno}, ${user.nombres}` : '';
+      if (this.userRole === 'PACIENTE' || !this.userRole) {
+        this.disabledButton = true;
+      }
+      this.loadComentarios();
+    });
   }
 
   loadComentarios(): void {
@@ -69,18 +85,10 @@ export class CommentsComponent {
     });
   }
 
-  nextPage(): void {
-    if (this.currentPage < this.totalPages - 1) {
-      this.currentPage++;
-      this.loadComentarios();
-    }
-  }
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadComentarios();
 
-  prevPage(): void {
-    if (this.currentPage > 0) {
-      this.currentPage--;
-      this.loadComentarios();
-    }
   }
 
   comentar(): void {

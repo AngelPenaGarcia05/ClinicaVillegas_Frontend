@@ -11,6 +11,8 @@ import { Pageable } from '../../shared/interfaces/page';
 })
 export class ComentarioService {
 
+  private readonly baseUrl = environment.apiUrl + '/comentarios';
+
   constructor(private http: HttpClient) {}
 
   getComentarios(page: number = 0, size: number = 5): Observable<Pageable<Comentario>> {
@@ -18,11 +20,11 @@ export class ComentarioService {
       .set('page', page.toString())
       .set('size', size.toString());
 
-    return this.http.get<any>(`${environment.apiUrl}comentarios`, { params });
+    return this.http.get<any>(this.baseUrl, { params });
   }
 
   createComentario(contenido: string, usuarioId: number, comentarioId: number | null): Observable<any> {
-    return this.http.post<any>(`${environment.apiUrl}comentarios`, {
+    return this.http.post<any>(this.baseUrl, {
       contenido,
       usuarioId,
       comentarioId
