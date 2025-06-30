@@ -203,7 +203,7 @@ export class RegisterComponent {
       }).subscribe({
         next: (response) => {
           console.log(response);
-          this.router.navigate(['/dashboard/reserva']);
+          this.router.navigate(['/dashboard/appointment']);
         },
         error: (error) => {
           console.log('Error:' + error.message);
@@ -211,7 +211,7 @@ export class RegisterComponent {
         }
       });
       console.log('Formulario válido', this.registerForm.value);
-      this.router.navigate(['/dashboard/reserva']);
+      this.router.navigate(['/dashboard/appointment']);
     }
   }
 }
