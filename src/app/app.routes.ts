@@ -16,7 +16,7 @@ import { DentistScheduleComponent } from './dashboard/pages/dentist-schedule/den
 import { AdministratorComponent } from './dashboard/pages/administrator/administrator.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
+    { path: '', redirectTo: '/home', pathMatch: 'full' },
     {
         path: 'home', component: HomeLayoutComponent, title: 'Clinica Dental Villegas', children: [
             { path: '', component: HomeComponent, title: 'Clinica Dental Villegas' },
