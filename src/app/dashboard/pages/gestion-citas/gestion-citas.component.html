@@ -53,15 +53,15 @@
           <td>
             @switch (cita.estado) {
               @case ('Pendiente') {
-                <button class="btn btn-blue-color" (click)="openModalToCancel(cita)">Cancelar</button>
-                <button class="btn btn-blue-color"
+                <button class="btn cancelar" (click)="openModalToCancel(cita)">Cancelar</button>
+                <button class="btn reprogramar"
                   (click)="establecerHorarios(cita); openModalToReprogramar(cita)">Reprogramar</button>
                 @if (yaHaPasadoFechaHora(cita.fecha, cita.hora)) {
                   <button class="btn atender" (click)="openModalToAtender(cita)">Atender</button>
                 }
               }
               @case ('Cancelada') {
-                <button class="btn btn-blue-color"
+                <button class="btn reprogramar"
                   (click)="establecerHorarios(cita); openModalToReprogramar(cita)">Reprogramar</button>
               }
               @default {
