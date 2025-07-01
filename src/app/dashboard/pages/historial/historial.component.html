@@ -49,10 +49,16 @@
           <td><span class="estado-reserva" [class]="cita.estado.toLowerCase()">{{cita.estado}}</span></td>
           <td>S/.{{cita.tratamiento.costo}} PEN</td>
           <td>
-            @if (cita.estado === 'Pendiente') {
-            <button class="btn cancelar" (click)="openModalToCancel(cita)">Cancelar</button>
-            <button class="btn reprogramar"
-              (click)="establecerHorarios(cita); openModalToReprogramar(cita)">Reprogramar</button>
+            @switch (cita.estado) {
+              @case ('Pendiente') {
+                <button class="btn btn-blue-color" (click)="openModalToCancel(cita)">Cancelar</button>
+                <button class="btn btn-blue-color" (click)="establecerHorarios(cita); openModalToReprogramar(cita)">Reprogramar</button>
+              }
+              @case ('Cancelada') {
+                <button class="btn btn-blue-color" (click)="establecerHorarios(cita); openModalToReprogramar(cita)">Reprogramar</button>
+              }
+              @default {
+              }
             }
           </td>
         </tr>
