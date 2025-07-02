@@ -53,21 +53,23 @@
                         formControlName="documento" id="documento" placeholder="Ingrese su documento"
                         (change)="onDocumentChange()">
                     @if (documentControl?.invalid && (documentControl?.touched || documentControl?.dirty)) {
-                        @if (passwordControl?.errors?.['required']) {
-                        <span>El campo es requerido</span>
-                        }
-                        @if (passwordControl?.errors?.['minlength']) {
-                        <span>
-                            Min.
-                            {{passwordControl?.errors?.['minlength'].requiredLength}} caracteres
-                        </span>
-                        }
-                        @if (passwordControl?.errors?.['maxLength']) {
-                        <span>
-                            Max.
-                            {{passwordControl?.errors?.['maxLength'].requiredLength}} caracteres
-                        </span>
-                        }
+                        <div class="invalid-feedback">
+                            @if (documentControl?.errors?.['required']) {
+                            <span>El campo es requerido</span>
+                            }
+                            @if (documentControl?.errors?.['minlength']) {
+                            <span>
+                                Min.
+                                {{documentControl?.errors?.['minlength'].requiredLength}} caracteres
+                            </span>
+                            }
+                            @if (documentControl?.errors?.['maxLength']) {
+                            <span>
+                                Max.
+                                {{documentControl?.errors?.['maxLength'].requiredLength}} caracteres
+                            </span>
+                            }
+                        </div>
                     }
                 </div>
                 <div class="col-md-6">
