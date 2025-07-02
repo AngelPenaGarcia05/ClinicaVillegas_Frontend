@@ -250,7 +250,7 @@ export class AppointmentComponent implements OnInit {
         this.reservaForm.get('paciente')?.get('apellidoPaterno')?.setValue('');
         this.reservaForm.get('paciente')?.get('apellidoMaterno')?.setValue('');
         this.reservaForm.get('paciente')?.get('numeroIdentidad')?.setValue('');
-        this.reservaForm.get('paciente')?.get('numeroIdentidad')?.setValidators([Validators.required, Validators.maxLength(20), Validators.pattern('^[0-9]*$')]);
+        this.reservaForm.get('paciente')?.get('numeroIdentidad')?.setValidators([Validators.required, Validators.minLength(12), Validators.maxLength(12), Validators.pattern('^[0-9]*$')]);
         this.reservaForm.get('paciente')?.get('numeroIdentidad')?.enable();
         break;
       case "CARNET EXT.":
@@ -259,7 +259,7 @@ export class AppointmentComponent implements OnInit {
         this.reservaForm.get('paciente')?.get('apellidoPaterno')?.setValue('');
         this.reservaForm.get('paciente')?.get('apellidoMaterno')?.setValue('');
         this.reservaForm.get('paciente')?.get('numeroIdentidad')?.setValue('');
-        this.reservaForm.get('paciente')?.get('numeroIdentidad')?.setValidators([Validators.required, Validators.maxLength(20), Validators.pattern('^[0-9]*$')]);
+        this.reservaForm.get('paciente')?.get('numeroIdentidad')?.setValidators([Validators.required, Validators.minLength(12), Validators.maxLength(12), Validators.pattern('^[0-9]*$')]);
         this.reservaForm.get('paciente')?.get('numeroIdentidad')?.enable();
         break;
       default:

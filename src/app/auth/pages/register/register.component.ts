@@ -94,7 +94,8 @@ export class RegisterComponent {
       documentoControl?.setValue('');
       documentoControl?.setValidators([
         Validators.required,
-        Validators.maxLength(20),
+        Validators.minLength(12),
+        Validators.maxLength(12),
         Validators.pattern('^[0-9]*$')
       ]);
       this.mostrarBotonDni = false;
@@ -105,7 +106,8 @@ export class RegisterComponent {
       documentoControl?.setValue('');
       documentoControl?.setValidators([
         Validators.required,
-        Validators.maxLength(20),
+        Validators.minLength(12),
+        Validators.maxLength(12),
         Validators.pattern('^[0-9]*$')
       ]);
       this.mostrarBotonDni = false;
