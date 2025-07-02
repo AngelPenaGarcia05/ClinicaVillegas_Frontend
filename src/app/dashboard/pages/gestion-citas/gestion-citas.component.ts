@@ -15,11 +15,12 @@ import { citaValidator } from '../../../shared/validators/cita.validator';
 import { DatepickerComponent } from '../../components/datepicker/datepicker.component';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
+import { CalendarComponent } from '../../components/calendar/calendar.component';
 
 @Component({
   selector: 'app-gestion-citas',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ModalComponent, DatepickerComponent, PaginationComponent],
+  imports: [CommonModule, ReactiveFormsModule, ModalComponent, DatepickerComponent, PaginationComponent, CalendarComponent],
   templateUrl: './gestion-citas.component.html',
   styleUrl: './gestion-citas.component.css'
 })
