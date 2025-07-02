@@ -82,7 +82,7 @@
                     <small class="form-text text-danger">El número de identidad es obligatorio y debe ser numérico.</small>
                 }
                 @if (getError('paciente.numeroIdentidad', 'minlength') || getError('paciente.numeroIdentidad','maxlength')) {
-                    <small class="form-text text-danger">El número de documento debe tener {{ reservaForm.get('paciente')?.get('tipoDocumento')?.errors?.['minlength'].requiredLength }} caracteres.</small>
+                    <small class="form-text text-danger">El número de documento debe tener {{ reservaForm.get('paciente')?.get('numeroIdentidad')?.errors?.['minlength'].requiredLength }} caracteres.</small>
                 }
 
                 @if (mostrarBotonDni) {
