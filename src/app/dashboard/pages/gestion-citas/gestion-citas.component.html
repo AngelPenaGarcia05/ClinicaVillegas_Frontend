@@ -79,7 +79,7 @@
   <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChange)="onPageChange($event)">
   </app-pagination>
   <div class="tabla-container">
-    <app-calendar class="mx-3 mx-md-5" [citas]="citas"></app-calendar>
+    <app-calendar [citas]="citas"></app-calendar>
   </div>
 </div>
 <app-modal #modalCancelacion>
