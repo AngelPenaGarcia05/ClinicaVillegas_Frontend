@@ -17,7 +17,6 @@
         <option value="Cancelada">Cancelada</option>
       </select>
       <button class="btn btn-blue-color" [disabled]="!formCitas.valid" (click)="loadCitasWithParams()">Buscar</button>
-      <button class="btn btn-blue-color" (click)="modalCalendario.open()">Mostrar calendario</button>
     </form>
   </div>
   <div class="tabla-container">
@@ -145,14 +144,4 @@
     <button class="btn btn-primary" (click)="atenderReserva()">Aceptar</button>
   </div>
 </app-modal>
-<app-modal #modalCalendario>
-  <div modal-header>
-    <h5 class="modal-title">Calendario</h5>
-  </div>
-  <div modal-body>
-    <app-calendar [citas]="citas"></app-calendar>
-  </div>
-  <div modal-footer>
-    <button class="btn btn-secondary" (click)="modalCalendario.close()">Cerrar</button>
-  </div>
-</app-modal>
+<app-calendar [citas]="citas"></app-calendar>
