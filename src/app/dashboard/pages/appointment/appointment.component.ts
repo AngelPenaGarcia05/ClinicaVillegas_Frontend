@@ -238,33 +238,34 @@ export class AppointmentComponent implements OnInit {
   agregarValidadores(event: Event) {
     const target = event.target as HTMLSelectElement;
     const tipoDocumento = target.value;
+    const numeroIdentidadControl = this.reservaForm.get('paciente.numeroIdentidad');
+
+    numeroIdentidadControl?.reset();
+    numeroIdentidadControl?.clearValidators();
+
     switch (tipoDocumento) {
       case "DNI":
         this.mostrarBotonDni = true;
-        this.reservaForm.get('paciente')?.get('numeroIdentidad')?.setValidators([Validators.required, Validators.minLength(8), Validators.maxLength(8), Validators.pattern('^[0-9]*$')]);
-        this.reservaForm.get('paciente')?.get('numeroIdentidad')?.enable();
+        numeroIdentidadControl?.setValidators([
+          Validators.required,
+          Validators.pattern('^\\d{8}$')
+        ]);
         break;
       case "PASAPORTE":
-        this.mostrarBotonDni = false;
-        this.reservaForm.get('paciente')?.get('nombres')?.setValue('');
-        this.reservaForm.get('paciente')?.get('apellidoPaterno')?.setValue('');
-        this.reservaForm.get('paciente')?.get('apellidoMaterno')?.setValue('');
-        this.reservaForm.get('paciente')?.get('numeroIdentidad')?.setValue('');
-        this.reservaForm.get('paciente')?.get('numeroIdentidad')?.setValidators([Validators.required, Validators.minLength(12), Validators.maxLength(12), Validators.pattern('^[0-9]*$')]);
-        this.reservaForm.get('paciente')?.get('numeroIdentidad')?.enable();
-        break;
       case "CARNET EXT.":
         this.mostrarBotonDni = false;
-        this.reservaForm.get('paciente')?.get('nombres')?.setValue('');
-        this.reservaForm.get('paciente')?.get('apellidoPaterno')?.setValue('');
-        this.reservaForm.get('paciente')?.get('apellidoMaterno')?.setValue('');
-        this.reservaForm.get('paciente')?.get('numeroIdentidad')?.setValue('');
-        this.reservaForm.get('paciente')?.get('numeroIdentidad')?.setValidators([Validators.required, Validators.minLength(12), Validators.maxLength(12), Validators.pattern('^[0-9]*$')]);
-        this.reservaForm.get('paciente')?.get('numeroIdentidad')?.enable();
-        break;
-      default:
+        this.reservaForm.get('paciente.nombres')?.setValue('');
+        this.reservaForm.get('paciente.apellidoPaterno')?.setValue('');
+        this.reservaForm.get('paciente.apellidoMaterno')?.setValue('');
+        numeroIdentidadControl?.setValidators([
+          Validators.required,
+          Validators.pattern('^\\d{12}$')
+        ]);
         break;
     }
+
+    numeroIdentidadControl?.updateValueAndValidity();
+    numeroIdentidadControl?.enable();
   }
 
   guardarReserva() {

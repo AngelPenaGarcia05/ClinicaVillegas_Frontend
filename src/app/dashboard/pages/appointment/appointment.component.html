@@ -77,12 +77,19 @@
                 <label for="dni-paciente-label" class="form-label mt-2">Número de documento:</label>
                 <input type="text" class="form-control" id="dni-paciente-label" formControlName="numeroIdentidad"
                     [class.is-invalid]="getError('paciente.numeroIdentidad', 'required') || getError('paciente.numeroIdentidad', 'pattern')">
-
-                @if (getError('paciente.numeroIdentidad', 'required') || getError('paciente.numeroIdentidad', 'pattern')) {
-                    <small class="form-text text-danger">El número de identidad es obligatorio y debe ser numérico.</small>
-                }
-                @if (getError('paciente.numeroIdentidad', 'minlength') || getError('paciente.numeroIdentidad','maxlength')) {
-                    <small class="form-text text-danger">El número de documento debe tener {{ reservaForm.get('paciente')?.get('numeroIdentidad')?.errors?.['minlength'].requiredLength }} caracteres.</small>
+                @if (getError('paciente.numeroIdentidad', 'required') || getError('paciente.numeroIdentidad',
+                'pattern')) {
+                <small class="form-text text-danger">
+                    @if (getError('paciente.numeroIdentidad', 'required')) {
+                    El número de documento es obligatorio.
+                    } @else if (reservaForm.get('paciente.numeroIdentidad')?.value?.length !== 8 && mostrarBotonDni) {
+                    El número de DNI debe tener exactamente 8 dígitos numéricos.
+                    } @else if (reservaForm.get('paciente.numeroIdentidad')?.value?.length !== 12 && !mostrarBotonDni) {
+                    El número de documento debe tener exactamente 12 dígitos numéricos.
+                    } @else {
+                    El número de documento no es válido.
+                    }
+                </small>
                 }
 
                 @if (mostrarBotonDni) {
