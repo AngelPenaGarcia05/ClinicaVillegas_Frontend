@@ -187,6 +187,8 @@ export class RegisterComponent {
       this.registrar();
     } else {
       this.toastrService.error('El código no es correcto');
+      this.codigoControl.reset();
+      this.modal.close();
     }
   }
   registrar(): void {
@@ -206,10 +208,11 @@ export class RegisterComponent {
         next: (response) => {
           console.log(response);
           this.router.navigate(['/dashboard/appointment']);
+          this.toastrService.success('Registro exitoso', 'Bienvenido');
         },
         error: (error) => {
           console.log('Error:' + error.message);
-          this.toastrService.error(error.error.message);
+          this.toastrService.error("Error al registrar", error.error.message);
         }
       });
       console.log('Formulario válido', this.registerForm.value);

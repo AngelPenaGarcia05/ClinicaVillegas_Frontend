@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { response } from 'express';
 import { error } from 'console';
 import { Route, Router, RouterLink } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ export class LoginComponent {
   showPassword = signal(false);
 
   authService = inject(AuthService);
+  toastService = inject(ToastrService);
   
   loginForm: FormGroup;
 
@@ -41,8 +43,10 @@ export class LoginComponent {
         next: (response) =>{
           console.log(response);
           this.router.navigate(['dashboard/appointment']);
+          this.toastService.success('Inicio de sesión exitoso', 'Bienvenido');
         },
         error: (error) => {
+          this.toastService.error('Error al iniciar sesión', 'Por favor, verifica tus credenciales');
           console.log(error);
         }
       })
