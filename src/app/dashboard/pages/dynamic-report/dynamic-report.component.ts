@@ -9,6 +9,14 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { Usuario } from '../../../shared/interfaces/usuario';
 import { AuthService } from '../../../auth/services/auth.service';
+import { DentistaService } from '../../services/dentista.service';
+import { TratamientoService } from '../../services/tratamiento.service';
+import { TipoTratamientoService } from '../../services/tipo-tratamiento.service';
+import { TipoDocumentoService } from '../../services/tipo-documento.service';
+import { Dentista } from '../../../shared/interfaces/dentista';
+import { TipoTratamiento } from '../../../shared/interfaces/tipo-tratamiento';
+import { TipoDocumento } from '../../../shared/interfaces/tipo-documento';
+import { Tratamiento } from '../../../shared/interfaces/tratamiento';
 
 @Component({
   selector: 'app-dynamic-report',
@@ -20,6 +28,10 @@ export class DynamicReportComponent {
   tipoReporte = signal<string>('table');
   toastService = inject(ToastrService);
   authService = inject(AuthService);
+  dentistaService = inject(DentistaService);
+  tratamientoService = inject(TratamientoService);
+  tipoTratamientoService = inject(TipoTratamientoService);
+  tipoDocumentoService = inject(TipoDocumentoService);
 
   modalFormat = viewChild<ModalComponent>('modalFormat');
   modalConfig = viewChild<ModalComponent>('modalConfig');
@@ -46,6 +58,7 @@ export class DynamicReportComponent {
   ];
   camposNumericos = ['id', 'monto'];
   agregaciones = ['conteo', 'suma', 'promedio', 'max', 'min'];
+  opcionesDisponiblesPorFiltro: string[][] = [];
 
   constructor(private reporteService: ReportService, private fb: FormBuilder) {
     this.user$ = this.authService.fetchUser();
@@ -54,8 +67,8 @@ export class DynamicReportComponent {
       columnas: [''],
       valor: ['id'],
       agregacion: ['conteo'],
-      fechaDesde: ['2024-01-01'],
-      fechaHasta: ['2024-12-31'],
+      fechaDesde: [''],
+      fechaHasta: [''],
       filtros: this.fb.array([])
     })
     this.cargarReporte();
@@ -73,10 +86,49 @@ export class DynamicReportComponent {
       campo: [''],
       valor: ['']
     }));
+    this.opcionesDisponiblesPorFiltro.push([]);
   }
   removeFiltro(index: number) {
     this.filtros.removeAt(index);
+    this.opcionesDisponiblesPorFiltro.splice(index, 1);
   }
+  cargarDatosDisponiblesPorFiltro(event: Event, index: number) {
+    const target = event.target as HTMLSelectElement;
+    const campo = target.value;
+
+    switch (campo) {
+      case 'dentista':
+        this.dentistaService.obtenerDentistas({}, true).subscribe(dentistas => {
+          this.opcionesDisponiblesPorFiltro[index] = (dentistas as Dentista[]).map(d => d.nombres);
+        });
+        break;
+      case 'tipoTratamiento':
+        this.tipoTratamientoService.getTipoTratamientos(undefined, true, true).subscribe(tipos => {
+          this.opcionesDisponiblesPorFiltro[index] = (tipos as TipoTratamiento[]).map(t => t.nombre);
+        });
+        break;
+      case 'tipoDocumento':
+        this.tipoDocumentoService.getTiposDocumento({}, true).subscribe(tipos => {
+          this.opcionesDisponiblesPorFiltro[index] = (tipos as TipoDocumento[]).map(t => t.nombre);
+        });
+        break;
+      case 'sexo':
+        this.opcionesDisponiblesPorFiltro[index] = ['MASCULINO', 'FEMENINO'];
+        break;
+      case 'estado':
+        this.opcionesDisponiblesPorFiltro[index] = ['Pendiente', 'Atendida', 'Cancelada'];
+        break;
+      case 'tratamiento':
+        this.tratamientoService.getTratamientos({}, true).subscribe(tratamientos => {
+          this.opcionesDisponiblesPorFiltro[index] = (tratamientos as Tratamiento[]).map(t => t.nombre);
+        });
+        break;
+      default:
+        this.opcionesDisponiblesPorFiltro[index] = [];
+    }
+  }
+
+
   setTipoReporte(type: string) {
     this.tipoReporte.set(type);
   }

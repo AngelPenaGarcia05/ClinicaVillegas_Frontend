@@ -89,7 +89,7 @@
                     } @else {
                     El número de documento no es válido.
                     }
-                </small>
+                </small><br>
                 }
 
                 @if (mostrarBotonDni) {
@@ -104,7 +104,7 @@
                     [readOnly]="mostrarBotonDni" [class.is-invalid]="getError('paciente.nombres', 'required')">
 
                 @if (getError('paciente.nombres', 'required')) {
-                <small class="form-text text-danger">El nombre del paciente es obligatorio.</small>
+                <small class="form-text text-danger">El nombre del paciente es obligatorio.</small><br>
                 }
 
                 <label for="apellidop-paciente-label" class="form-label mt-2">Apellido paterno:</label>
@@ -112,7 +112,7 @@
                     [readOnly]="mostrarBotonDni" [class.is-invalid]="getError('paciente.apellidoPaterno', 'required')">
 
                 @if (getError('paciente.apellidoPaterno', 'required')) {
-                <small class="form-text text-danger">El apellido paterno es obligatorio.</small>
+                <small class="form-text text-danger">El apellido paterno es obligatorio.</small><br>
                 }
 
                 <label for="apellidom-paciente-label" class="form-label mt-2">Apellido materno:</label>
@@ -120,7 +120,7 @@
                     [readOnly]="mostrarBotonDni" [class.is-invalid]="getError('paciente.apellidoMaterno', 'required')">
 
                 @if (getError('paciente.apellidoMaterno', 'required')) {
-                <small class="form-text text-danger">El apellido materno es obligatorio.</small>
+                <small class="form-text text-danger">El apellido materno es obligatorio.</small><br>
                 }
 
                 <label for="fecha-nacimiento-label" class="form-label mt-2">Fecha de nacimiento:</label>
@@ -128,7 +128,7 @@
                     [class.is-invalid]="getError('paciente.fechaNacimiento', 'required')">
 
                 @if (getError('paciente.fechaNacimiento', 'required')) {
-                <small class="form-text text-danger">Ingrese una fecha válida.</small>
+                <small class="form-text text-danger">Ingrese una fecha válida.</small><br>
                 }
 
                 <div class="gender mt-3">

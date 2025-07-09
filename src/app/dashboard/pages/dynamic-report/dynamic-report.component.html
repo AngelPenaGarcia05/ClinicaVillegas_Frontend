@@ -108,18 +108,25 @@
             <div class="d-flex flex-column gap-2">
                 @for (filtro of filtrosFormGroups; track $index; let i = $index) {
                 <div [formGroup]="filtro" class="d-flex gap-2 align-items-center">
-                    <select class="form-select form-select-sm flex-grow-1" formControlName="campo">
+                    <select class="form-select form-select-sm flex-grow-1" formControlName="campo"
+                        (change)="cargarDatosDisponiblesPorFiltro($event, i)">
                         @for (campo of camposDisponibles; track $index) {
                         <option [value]="campo.valor">{{ campo.titulo }}</option>
                         }
                     </select>
-                    <input type="text" class="form-control form-control-sm flex-grow-1" placeholder="Valor"
-                        formControlName="valor" />
+
+                    <select class="form-select form-select-sm flex-grow-1" formControlName="valor">
+                        @for (opcion of opcionesDisponiblesPorFiltro[i]; track $index) {
+                        <option [value]="opcion">{{ opcion }}</option>
+                        }
+                    </select>
+
                     <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeFiltro(i)">
                         <i class="bi bi-x"></i>
                     </button>
                 </div>
                 }
+
             </div>
         </div>
     </div>
