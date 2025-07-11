@@ -290,16 +290,7 @@ export class AppointmentComponent implements OnInit {
         this.toastService.success("Cita reservada con éxito");
         this.stepper.goToStep(0);
         this.reservaForm.reset();
-        this.citaService.buscarCitas({ usuarioId: this.userId }).subscribe({
-          next: (citas) => {
-            this.citas = citas as Cita[];
-            this.changeDetectorRef.detectChanges();
-          },
-          error: (error) => {
-            console.error('Error al actualizar citas:', error);
-            this.toastService.error('Error al actualizar citas: ' + error.message);
-          }
-        });
+        this.loadCitas();
       },
       error: (error) => {
         console.error('Error al guardar la reserva:', error);

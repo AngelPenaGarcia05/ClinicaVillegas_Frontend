@@ -17,7 +17,7 @@ import { ModalComponent } from '../../../shared/components/modal/modal.component
   styleUrl: './calendar.component.css'
 })
 export class CalendarComponent {
-isBrowser: boolean;
+  isBrowser: boolean;
   @Input() citas!: Cita[];
   @ViewChild('modal') modal!: ModalComponent;
 
@@ -30,7 +30,7 @@ isBrowser: boolean;
 
   }
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['citas'] && changes['citas'].currentValue) {
+    if (Array.isArray(this.citas)) {
       this.citaEvents = this.citas.map((cita) => {
         const startDateTime = new Date(`${cita.fecha}T${cita.hora}`);
 
@@ -51,8 +51,11 @@ isBrowser: boolean;
         };
       });
       this.calendarOptions.events = this.citaEvents;
+    } else {
+      console.warn('Valor de "citas" no es un arreglo:', this.citas);
     }
   }
+
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.isBrowser = isPlatformBrowser(this.platformId);

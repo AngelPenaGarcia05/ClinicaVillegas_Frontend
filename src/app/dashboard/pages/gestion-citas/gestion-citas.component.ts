@@ -27,6 +27,7 @@ import { CalendarComponent } from '../../components/calendar/calendar.component'
 export class GestionCitasComponent {
 
   citas: Cita[] = [];
+  citasPendientes: Cita[] = [];
   totalPages = 0;
   currentPage = 0;
   pageSize = 10;
@@ -58,9 +59,9 @@ export class GestionCitasComponent {
   trackedCita!: Cita;
 
   formCitas = new FormGroup({
-    fechaInicio: new FormControl('', Validators.required),
-    fechaFin: new FormControl('', [Validators.required]),
-    estado: new FormControl('', Validators.required),
+    fechaInicio: new FormControl(''),
+    fechaFin: new FormControl(''),
+    estado: new FormControl(''),
   });
   formReprogramar: FormGroup;
   formCancelacion: FormGroup;
@@ -86,6 +87,16 @@ export class GestionCitasComponent {
         const responseFormat = response as Pageable<Cita>;
         this.citas = responseFormat.content;
         this.totalPages = responseFormat.page.totalPages;
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+    this.citaService.buscarCitas({ dentistaId: this.dentistaId, estado: 'Pendiente' }, true).subscribe({
+      next: (response) => {
+        const responseFormat = response as Cita[];
+        this.citas = responseFormat;
+        this.citasPendientes = responseFormat.filter(cita => cita.estado === 'Pendiente');
       },
       error: (error) => {
         console.log(error);
