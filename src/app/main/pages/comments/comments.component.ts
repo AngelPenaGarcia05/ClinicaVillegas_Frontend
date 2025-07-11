@@ -34,7 +34,7 @@ import { PaginationComponent } from '../../../shared/components/pagination/pagin
   `,
   styleUrl: './comments.component.css'
 })
-export class CommentsComponent {
+export class CommentsComponent implements OnInit {
 
   comentarioService = inject(ComentarioService);
   authService = inject(AuthService);
@@ -59,18 +59,20 @@ export class CommentsComponent {
     Validators.maxLength(500)
   ]);
 
-  constructor() {
+  ngOnInit(): void {
+    this.loadComentarios();
+
     this.user$ = this.authService.fetchUser();
     this.user$.subscribe(user => {
-      this.userId = user ? user.id : 0;
-      this.userRole = user ? user.rol : '';
-      this.nombresUsuario = user ? `${user.apellidoPaterno} ${user.apellidoMaterno}, ${user.nombres}` : '';
-      if (this.userRole === 'PACIENTE' || !this.userRole) {
-        this.disabledButton = true;
-      }
-      this.loadComentarios();
+      this.userId = user?.id ?? 0;
+      this.userRole = user?.rol ?? '';
+      this.nombresUsuario = user
+        ? `${user.apellidoPaterno} ${user.apellidoMaterno}, ${user.nombres}`
+        : '';
+      this.disabledButton = this.userRole === 'PACIENTE' || !this.userRole;
     });
   }
+
 
   loadComentarios(): void {
     this.comentarioService.getComentarios(this.currentPage, this.pageSize).subscribe({
