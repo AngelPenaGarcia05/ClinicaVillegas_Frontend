@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ComentarioService } from '../../services/comentario.service';
@@ -7,7 +7,7 @@ import { Comentario } from '../../interfaces/comentario';
 import { map, Observable } from 'rxjs';
 import { Usuario } from '../../../shared/interfaces/usuario';
 import { QuestionComponent } from '../../components/question/question.component';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, isPlatformBrowser } from '@angular/common';
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 
 
@@ -40,6 +40,8 @@ export class CommentsComponent implements OnInit {
   authService = inject(AuthService);
   toast = inject(ToastrService);
 
+  plataform = inject(PLATFORM_ID);
+
   comentarios: Comentario[] = [];
   user$!: Observable<Usuario | null>;
   userRole = '';
@@ -60,7 +62,9 @@ export class CommentsComponent implements OnInit {
   ]);
 
   ngOnInit(): void {
-    this.loadComentarios();
+    if(isPlatformBrowser(this.plataform)){
+      this.loadComentarios();
+    }
 
     this.user$ = this.authService.fetchUser();
     this.user$.subscribe(user => {
