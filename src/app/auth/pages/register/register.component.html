@@ -1,0 +1,222 @@
+<div class="card card-register w-100" style="max-width: 500px;">
+    <div class="card-body p-4 p-md-5 overflow-elem">
+        <div class="text-center mb-4">
+            <h1 class="mb-3 fw-semibold text-blue-color">Registro</h1>
+            <hr>
+            <p class="text-muted text-blue-color">Bienvenido a la Clínica Dental Villegas</p>
+        </div>
+
+        <form [formGroup]="registerForm" (ngSubmit)="enviarCodigoVerificacion()">
+            <div class="mb-3">
+                <label for="email" class="form-label">Correo Electrónico</label>
+                <input type="email" id="email" class="form-control"
+                    [class.is-invalid]="emailControl?.invalid && (emailControl?.touched || emailControl?.dirty)"
+                    formControlName="email" placeholder="Ingresa tu correo electrónico">
+                @if (emailControl?.invalid && (emailControl?.touched || emailControl?.dirty)) {
+                <div class="invalid-feedback">
+                    @if (emailControl?.errors?.['required']) {
+                    <span>Requerido</span>
+                    }
+                    @if (emailControl?.errors?.['email']) {
+                    <span>Correo inválido</span>
+                    }
+                </div>
+                }
+            </div>
+
+            <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                    <label for="tipodocumento" class="form-label">Tipo de documento</label>
+                    <select class="form-select" formControlName="tipodocumento" id="tipodocumento">
+                        @for (tipodocumento of tiposDocumento | async; track $index) {
+                        <option value="{{tipodocumento.acronimo}}">{{tipodocumento.nombre}}</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="dob" class="form-label">Fecha de nacimiento</label>
+                    <input type="date" class="form-control"
+                        [class.is-invalid]="birthDateControl?.invalid && (birthDateControl?.touched || birthDateControl?.dirty)"
+                        formControlName="fechanacimiento" id="dob">
+                    @if (birthDateControl?.errors?.['edadInvalida'] && (birthDateControl?.touched ||
+                    birthDateControl?.dirty)) {
+                    <div class="invalid-feedback">No es mayor de edad</div>
+                    }
+                </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                    <label for="documento" class="form-label">Documento</label>
+                    <input type="text" class="form-control"
+                        [class.is-invalid]="documentControl?.invalid && (documentControl?.touched || documentControl?.dirty)"
+                        formControlName="documento" id="documento" placeholder="Ingrese su documento"
+                        (change)="onDocumentChange()">
+                    @if (documentControl?.invalid && (documentControl?.touched || documentControl?.dirty)) {
+                        <div class="invalid-feedback">
+                            @if (documentControl?.errors?.['required']) {
+                            <span>El campo es requerido</span>
+                            }
+                            @if (documentControl?.errors?.['minlength']) {
+                            <span>
+                                Debe tener
+                                {{documentControl?.errors?.['minlength'].requiredLength}} caracteres
+                            </span>
+                            }
+                            @if (documentControl?.errors?.['maxLength']) {
+                            <span>
+                                Debe tener
+                                {{documentControl?.errors?.['maxLength'].requiredLength}} caracteres
+                            </span>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="col-md-6">
+                    <label for="phone" class="form-label">Teléfono</label>
+                    <input type="tel" class="form-control"
+                        [class.is-invalid]="phoneControl?.invalid && (phoneControl?.touched || phoneControl?.dirty)"
+                        formControlName="telefono" id="phone" placeholder="Ingresar teléfono">
+                    @if (phoneControl?.invalid && (phoneControl?.touched || phoneControl?.dirty)) {
+                    <div class="invalid-feedback">Requerido</div>
+                    }
+                </div>
+            </div>
+
+            @if (mostrarBotonDni) {
+            <div class="d-grid mb-3">
+                <button type="button" class="btn bg-blue-color" (click)="obtenerNombresApellidos()"
+                    [disabled]="documentControl?.invalid">
+                    Obtener Nombres y Apellidos
+                </button>
+            </div>
+            }
+
+            <div class="mb-3">
+                <label for="nms" class="form-label">Nombres</label>
+                <input id="nms" type="text" class="form-control"
+                    [class.is-invalid]="namesControl?.invalid && (namesControl?.touched || namesControl?.dirty)"
+                    formControlName="nombres" placeholder="Ingresa tus nombres" [readonly]="mostrarBotonDni">
+                @if (namesControl?.invalid && (namesControl?.touched || namesControl?.dirty)) {
+                <span class="invalid-feedback">Requerido</span>
+                }
+                @if (registerForm.get('nombres')?.errors?.['soloLetras']) {
+                <span class="invalid-feedback">Solo letras</span>
+                }
+            </div>
+
+            <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                    <label for="alp" class="form-label">Apellido Paterno</label>
+                    <input id="alp" type="text" class="form-control"
+                        [class.is-invalid]="lastName1Control?.invalid && (lastName1Control?.touched || lastName1Control?.dirty)"
+                        formControlName="apellidoPaterno" placeholder="Ingresa tu apellido"
+                        [readonly]="mostrarBotonDni">
+                    @if (lastName1Control?.invalid && (lastName1Control?.touched || lastName1Control?.dirty)) {
+                    <div class="invalid-feedback">Requerido</div>
+                    @if (registerForm.get('apellidoPaterno')?.errors?.['soloLetras']) {
+                    <span class="invalid-feedback">Solo letras</span>
+                    }
+                    }
+                </div>
+                <div class="col-md-6">
+                    <label for="alm" class="form-label">Apellido Materno</label>
+                    <input id="alm" type="text" class="form-control"
+                        [class.is-invalid]="lastName2Control?.invalid && (lastName2Control?.touched || lastName2Control?.dirty)"
+                        formControlName="apellidoMaterno" placeholder="Ingresa tu apellido"
+                        [readonly]="mostrarBotonDni">
+                    @if (lastName2Control?.invalid && (lastName2Control?.touched || lastName2Control?.dirty)) {
+                    <div class="invalid-feedback">Requerido</div>
+                    @if (registerForm.get('apellidoMaterno')?.errors?.['soloLetras']) {
+                    <span class="invalid-feedback">Solo letras</span>
+                    }
+                    }
+                </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input [type]="showPassword() ? 'text' : 'password'" class="form-control"
+                        [class.is-invalid]="passwordControl?.invalid && (passwordControl?.touched || passwordControl?.dirty)"
+                        formControlName="contrasena" id="password" placeholder="Ingresar contraseña">
+                    @if (passwordControl?.invalid && (passwordControl?.touched || passwordControl?.dirty)) {
+                    <div class="invalid-feedback">
+                        @if (passwordControl?.errors?.['required']) {
+                        <span>Requerido</span>
+                        }
+                        @if (passwordControl?.errors?.['minlength']) {
+                        <span>Mín. {{passwordControl?.errors?.['minlength'].requiredLength}} caracteres</span>
+                        }
+                    </div>
+                    }
+                </div>
+                <div class="col-md-6">
+                    <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
+                    <input [type]="showPassword() ? 'text' : 'password'" class="form-control"
+                        [class.is-invalid]="confirmPasswordControl?.invalid && (confirmPasswordControl?.touched || confirmPasswordControl?.dirty)"
+                        formControlName="confirmPassword" id="confirmPassword" placeholder="Confirmar contraseña">
+                    <div class="invalid-feedback">
+                        @if (registerForm.errors?.['passwordMismatch']) {
+                        <span>Las contraseñas no coinciden.</span>
+                        }
+                        @if (confirmPasswordControl?.invalid && (confirmPasswordControl?.touched
+                        ||confirmPasswordControl?.dirty)) {
+                        @if (confirmPasswordControl?.errors?.['required']) {
+                        <span>Requerido.</span>
+                        }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <button type="button" (click)="switchPasswordVisibility()" class="w-100 btn bg-blue-color">
+                    <i [class]="showPassword() ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                </button>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Sexo</label>
+                <div class="btn-group w-100" role="group">
+                    <input type="radio" class="btn-check" formControlName="sexo" id="masculino" value="MASCULINO"
+                        checked>
+                    <label class="btn bg-blue-color" for="masculino">Masculino</label>
+
+                    <input type="radio" class="btn-check" formControlName="sexo" id="femenino" value="FEMENINO">
+                    <label class="btn bg-blue-color" for="femenino">Femenino</label>
+                </div>
+            </div>
+
+            <div class="d-grid mb-3">
+                <button type="submit" class="btn bg-blue-color py-2" [disabled]="registerForm.invalid">
+                    Registrar
+                </button>
+            </div>
+
+            <div class="text-center">
+                <a href="auth/login" class="d-block mb-2">¿Ya tienes una cuenta? Inicia
+                    sesión aquí</a>
+                <a href="home" class="">Volver al inicio</a>
+            </div>
+        </form>
+    </div>
+</div>
+<app-modal #modal>
+    <div modal-header>
+        <h5 class="modal-title">Ingrese el código de verificación</h5>
+    </div>
+    <div modal-body>
+        <p>Hemos enviado un código al correo que nos brindó: {{registerForm.get('email')?.value}}. Porfavor ingrese el
+            código enviado para poder registrarse</p>
+        <label for="codigo-verificacion">Código</label>
+        <input id="codigo-verificacion" class="form-control" [formControl]="codigoControl" type="text">
+    </div>
+    <div modal-footer>
+        <button type="button" class="btn btn-secondary" (click)="modal.close()">Cerrar</button>
+        <button type="button" class="btn btn-primary" [disabled]="registerForm.get('codigoControl')?.invalid"
+            (click)="verificarCodigo()">
+            Enviar
+        </button>
+    </div>
+</app-modal>

@@ -1,0 +1,21 @@
+<full-calendar [options]="calendarOptions"></full-calendar>
+<app-modal #modal>
+    <div modal-header>
+        <h5 class="modal-title fw-bold">Información de la cita</h5>
+    </div>
+    <div modal-body>
+        <p><span class="fw-bold">Dentista:</span> {{trackedCita?.dentista?.apellidoPaterno}} {{trackedCita?.dentista?.apellidoMaterno}}, {{trackedCita?.dentista?.nombres}}</p>
+        <p><span class="fw-bold">Fecha:</span> {{trackedCita?.fecha}}</p>
+        <p><span class="fw-bold">Hora:</span> {{trackedCita?.hora}}</p>
+        <p><span class="fw-bold">Monto:</span> {{trackedCita?.monto}}</p>
+        <p><span class="fw-bold">Nombres:</span> {{trackedCita?.nombres}}</p>
+        <p><span class="fw-bold">Apellido Paterno:</span> {{trackedCita?.apellidoPaterno}}</p>
+        <p><span class="fw-bold">Apellido Materno:</span> {{trackedCita?.apellidoMaterno}}</p>
+        <p><span class="fw-bold">Tratamiento:</span> {{trackedCita?.tratamiento?.nombre}}</p>
+        <p><span class="fw-bold">Descripción del tratamiento:</span> {{trackedCita?.tratamiento?.descripcion}}</p>
+        <p><span class="fw-bold">Fecha de nacimiento:</span> {{trackedCita?.fechaNacimiento}}</p>
+    </div>
+    <div modal-footer>
+        <button class="btn btn-secondary" (click)="modal.close()">Cerrar</button>
+    </div>
+</app-modal>

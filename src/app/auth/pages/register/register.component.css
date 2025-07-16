@@ -1,0 +1,29 @@
+.card-register{
+    background-color: #e2e2e2;
+    min-width: 500px;
+    max-height: 80vh;
+}
+.btn-register{
+    background-color: var(--blue-color-soft);
+}
+.overflow-elem{
+    overflow-y: auto;
+    height: 100vh;
+}
+.text-blue-color{
+    color: var(--blue-color);
+}
+.bg-blue-color{
+    background-color: var(--blue-color);
+    color: white;
+}
+@media (max-width: 768px){
+    .card-register{
+        min-width: auto;
+        max-height: max-content;
+    }
+    .overflow-elem{
+        overflow-y: inherit;
+        height: auto;
+    }
+}

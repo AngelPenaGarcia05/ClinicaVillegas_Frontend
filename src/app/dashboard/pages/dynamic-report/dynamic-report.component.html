@@ -1,0 +1,188 @@
+<div class="container-fluid py-4">
+    <!-- Card de título -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-body py-2">
+            <h4 class="card-title mb-0">Reportes Dinámicos</h4>
+        </div>
+    </div>
+
+    <!-- Card de tipo de reporte y exportación -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-body py-2">
+            <div class="row g-2 align-items-center">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        <span class="me-2 small">Tipo de reporte:</span>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-primary btn-sm"
+                                [class.active]="tipoReporte() === 'table'" (click)="setTipoReporte('table')">
+                                <i class="bi bi-table"></i> Tabla
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm"
+                                [class.active]="tipoReporte() === 'chart'" (click)="setTipoReporte('chart')">
+                                <i class="bi bi-bar-chart"></i> Gráfico
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <button type="button" class="btn btn-outline-success btn-sm" (click)="modalExport.open()">
+                        <i class="bi bi-download"></i> Exportar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card de configuración principal -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-body py-2">
+            <form [formGroup]="configForm" class="row g-2">
+                <!-- Primera fila de controles -->
+                <div class="col-6 col-md-3">
+                    <label class="form-label small mb-1">Filas</label>
+                    <select class="form-select form-select-sm" formControlName="filas">
+                        @for (campo of camposDisponibles; track $index) {
+                        <option [value]="campo.valor">{{ campo.titulo }}</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label class="form-label small mb-1">Columnas</label>
+                    <select class="form-select form-select-sm" formControlName="columnas">
+                        @for (campo of camposDisponibles; track $index) {
+                        <option [value]="campo.valor">{{ campo.titulo }}</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label class="form-label small mb-1">Valor</label>
+                    <select class="form-select form-select-sm" formControlName="valor">
+                        @for (campo of camposNumericos; track $index){
+                        <option [value]="campo">{{ campo }}</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <label class="form-label small mb-1">Agregación</label>
+                    <select class="form-select form-select-sm" formControlName="agregacion">
+                        @for (tipo of agregaciones; track $index) {
+                        <option [value]="tipo">{{ tipo }}</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Segunda fila de controles -->
+                <div class="col-6 col-md-4">
+                    <label class="form-label small mb-1">Fecha desde</label>
+                    <input type="date" class="form-control form-control-sm" formControlName="fechaDesde" />
+                </div>
+
+                <div class="col-6 col-md-4">
+                    <label class="form-label small mb-1">Fecha hasta</label>
+                    <input type="date" class="form-control form-control-sm" formControlName="fechaHasta" />
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <button type="button" class="btn btn-primary btn-sm w-100 mt-md-2" (click)="cargarReporte()">
+                        Aplicar configuración
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Card de filtros avanzados -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-body py-2">
+            <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
+                <span class="fw-bold small">Filtros avanzados:</span>
+                <button type="button" class="btn btn-outline-primary btn-sm ms-auto" (click)="addFiltro()">
+                    <i class="bi bi-plus"></i> Agregar filtro
+                </button>
+            </div>
+
+            <div class="d-flex flex-column gap-2">
+                @for (filtro of filtrosFormGroups; track $index; let i = $index) {
+                <div [formGroup]="filtro" class="d-flex gap-2 align-items-center">
+                    <select class="form-select form-select-sm flex-grow-1" formControlName="campo"
+                        (change)="cargarDatosDisponiblesPorFiltro($event, i)">
+                        @for (campo of camposDisponibles; track $index) {
+                        <option [value]="campo.valor">{{ campo.titulo }}</option>
+                        }
+                    </select>
+
+                    <select class="form-select form-select-sm flex-grow-1" formControlName="valor">
+                        @for (opcion of opcionesDisponiblesPorFiltro[i]; track $index) {
+                        <option [value]="opcion">{{ opcion }}</option>
+                        }
+                    </select>
+
+                    <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeFiltro(i)">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                }
+
+            </div>
+        </div>
+    </div>
+
+    @if (tipoReporte() == 'table') {
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            @for (col of columnas; track $index) {
+                            <th>{{col.toUpperCase()}}</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (row of reportData; track $index) {
+                        <tr>
+                            @for (col of columnas; track $index) {
+                            <td>{{ row[col] }}</td>
+                            }
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    }
+    @if (tipoReporte() == 'chart') {
+    <div class="card">
+        <div class="card-body">
+            <canvas baseChart [data]="chartData" [type]="'bar'" [options]="chartOptions">
+            </canvas>
+        </div>
+    </div>
+    }
+</div>
+
+<app-modal #modalExport>
+    <div modal-header>
+        <h5 class="modal-title">Exportar Reporte</h5>
+    </div>
+    <div modal-body>
+        <p>Seleccione el formato de descarga:</p>
+        <div class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-danger" (click)="descargar('pdf'); modalExport.close()">
+                <i class="bi bi-file-earmark-pdf"></i> PDF
+            </button>
+            <button type="button" class="btn btn-success" (click)="descargar('excel'); modalExport.close()">
+                <i class="bi bi-file-earmark-excel"></i> Excel
+            </button>
+        </div>
+    </div>
+    <div modal-footer>
+        <button type="button" class="btn btn-secondary" (click)="modalExport.close()">Cancelar</button>
+    </div>
+</app-modal>

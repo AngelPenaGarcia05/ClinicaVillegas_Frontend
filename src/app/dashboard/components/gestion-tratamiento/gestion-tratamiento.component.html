@@ -1,0 +1,101 @@
+<section class="mb-5">
+    <h4 class="fw-bold">Tratamientos</h4>
+    <div class="d-flex justify-content-between mb-3">
+        <form [formGroup]="formBusqueda" class="w-50">
+            <input type="text" class="form-control" formControlName="busqueda" (change)="onChangeBusqueda()"
+                placeholder="Buscar">
+        </form>
+        <button class="btn btn-blue" (click)="openModalToCreate()">Agregar</button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Costo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (t of tratamientos; track $index) {
+                <tr>
+                    <td>{{ t.id }}</td>
+                    <td>{{ t.nombre }}</td>
+                    <td>S/ {{ t.costo }}</td>
+                    <td>
+                        <button class="btn btn-blue me-1" (click)="openModalToUpdate(t)">Editar</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-blue" (click)="openModalToDelete(t)">Eliminar</button>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChange)="onPageChange($event)">
+    </app-pagination>
+</section>
+
+<app-modal #modal>
+    <div modal-header>
+        <h5>{{accionFormulario}} tratamiento</h5>
+    </div>
+    <div modal-body>
+        <form [formGroup]="formTratamiento">
+            <label class="form-label">Nombre</label>
+            <input class="form-control" formControlName="nombre" />
+
+            <label class="form-label">Descripción</label>
+            <textarea class="form-control" formControlName="descripcion"></textarea>
+
+            <label class="form-label">Costo</label>
+            <input type="number" class="form-control" formControlName="costo" min="0" />
+
+            <label class="form-label">Duración</label>
+            <select class="form-select" formControlName="duracion">
+                <option value="20">20 mins</option>
+                <option value="30">30 mins</option>
+                <option value="45">45 mins</option>
+                <option value="60">1 hora</option>
+                <option value="90">1h 30mins</option>
+                <option value="120">2h</option>
+            </select>
+
+            <label class="form-label">Tipo de tratamiento</label>
+            <select class="form-select" formControlName="tipoTratamientoId">
+                @for (tipo of tiposTratamiento; track tipo.id) {
+                <option [value]="tipo.id">{{ tipo.nombre }}</option>
+                }
+            </select>
+
+            <label class="form-label">Imagen</label>
+            <input type="text" class="form-control" formControlName="imagenURL" />
+        </form>
+    </div>
+    <div modal-footer>
+        <button type="button" class="btn btn-secondary" (click)="modal.close()">Cerrar</button>
+        <button type="button" class="btn btn-primary ms-2" [disabled]="formTratamiento.invalid"
+            (click)="accionFormulario === 'Crear' ? guardarTratamiento() : actualizarTratamiento()">
+            {{accionFormulario}}
+        </button>
+    </div>
+</app-modal>
+
+<app-modal #modalDelete>
+    <div modal-header>
+        <h5>Eliminar tratamiento</h5>
+    </div>
+    <div modal-body>
+        @if (trackedTratamiento) {
+        <p>¿Estás seguro de eliminar el tratamiento "<strong>{{ trackedTratamiento.nombre }}</strong>"?</p>
+        }
+    </div>
+    <div modal-footer>
+        <button type="button" class="btn btn-secondary" (click)="modalDelete.close()">Cancelar</button>
+        <button type="button" class="btn btn-danger ms-2" (click)="eliminarTratamiento()">Eliminar</button>
+    </div>
+</app-modal>

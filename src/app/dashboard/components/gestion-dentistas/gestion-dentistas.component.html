@@ -1,0 +1,153 @@
+<section class="mb-5">
+  <h4 class="fw-bold">Dentistas</h4>
+
+  <div class="d-flex justify-content-between mb-3">
+    <form [formGroup]="dentistaBusqueda" class="w-50">
+      <input
+        type="text"
+        class="form-control"
+        formControlName="nombre"
+        (input)="onChangeDentista()"
+        placeholder="Buscar"
+      />
+    </form>
+    <button class="btn btn-blue" (click)="openModalToCreate()">Agregar</button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Especialidad</th>
+          <th>Número de colegiatura</th>
+          <th>Teléfono</th>
+          <th>Tipo de documento</th>
+          <th>Número de identidad</th>
+          <th colspan="2" class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (dentista of paginatedDentistas; track $index) {
+            <tr>
+              <td>{{ dentista.id }}</td>
+              <td>{{ dentista.nombres }}</td>
+              <td>{{ dentista.especializacion }}</td>
+              <td>{{ dentista.ncolegiatura }}</td>
+              <td>{{ dentista.telefono }}</td>
+              <td>{{ dentista.tipoDocumento.nombre }}</td>
+              <td>{{ dentista.numeroIdentidad }}</td>
+              <td><button class="btn btn-blue" (click)="openModalToEdit(dentista)">Editar</button></td>
+              <td><button class="btn btn-blue" (click)="openModalToDelete(dentista)">Eliminar</button></td>
+            </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <app-pagination
+    [currentPage]="currentPageDentista"
+    [totalPages]="totalPagesDentista"
+    (pageChange)="onPageChangeDentista($event)">
+  </app-pagination>
+</section>
+
+<app-modal #modalCreate>
+  <div modal-header>
+    <h4>{{ accionFormlario }}</h4>
+  </div>
+  <div modal-body>
+    <form [formGroup]="dentistaForm">
+      <label for="nColegiatura" class="form-label">Número de colegiatura</label>
+      <input
+        type="text"
+        class="form-control"
+        formControlName="nColegiatura"
+        id="nColegiatura"
+        placeholder="Número de colegiatura"
+        [class.is-invalid]="dentistaForm.get('nColegiatura')?.invalid && dentistaForm.get('nColegiatura')?.touched"
+      />
+
+      <label for="especialidad" class="form-label mt-1">Especialidad</label>
+      <input
+        type="text"
+        class="form-control"
+        formControlName="especialidad"
+        id="especialidad"
+        placeholder="Especialidad"
+        [class.is-invalid]="dentistaForm.get('especialidad')?.invalid && dentistaForm.get('especialidad')?.touched"
+      />
+
+      <label for="usuarioId" class="form-label mt-1">Seleccionar usuario</label>
+      <input
+        type="text"
+        class="form-control"
+        formControlName="usuarioId"
+        id="usuarioId"
+        placeholder="Usuario seleccionado"
+        readonly
+      />
+
+      <table class="table table-striped table-bordered mt-2">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido Paterno</th>
+            <th>Apellido Materno</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (usuario of paginatedUsuarios; track $index) {
+            <tr>
+              <td>{{ usuario.id }}</td>
+              <td>{{ usuario.nombres }}</td>
+              <td>{{ usuario.apellidoPaterno }}</td>
+              <td>{{ usuario.apellidoMaterno }}</td>
+              <td>
+                <button class="btn btn-blue" (click)="setUsuarioTracked(usuario)">Seleccionar</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <app-pagination
+        [currentPage]="currentPageUsuario"
+        [totalPages]="totalPagesUsuario"
+        (pageChange)="onPageChangeUsuario($event)">
+      </app-pagination>
+    </form>
+  </div>
+  <div modal-footer>
+    <button type="button" class="btn btn-blue" (click)="modalCreate.close()">Cancelar</button>
+
+    @if (accionFormlario === 'Nuevo dentista') {
+      <button type="button" [disabled]="dentistaForm.invalid" class="btn btn-blue ms-2" (click)="registrarDentista()">Crear</button>
+    }
+    @if (accionFormlario === 'Editar dentista') {
+      <button type="button" [disabled]="dentistaForm.invalid" class="btn btn-blue ms-2" (click)="editarDentista()">Editar</button>
+    }
+  </div>
+</app-modal>
+
+<app-modal #modalDelete>
+  <div modal-header>
+    <h4>Eliminar dentista</h4>
+  </div>
+  <div modal-body>
+    @if (dentistaTracked) {
+      <p>¿Está seguro de descartar el perfil de dentista asignado al correo "{{ dentistaTracked.correo }}"?</p>
+      <form [formGroup]="formEliminarDentista">
+        <label for="motivoCese">Motivo de cese laboral</label>
+        <textarea id="motivoCese" class="form-control" formControlName="motivoCese"></textarea>
+      </form>
+    }
+  </div>
+  <div modal-footer>
+    <button type="button" class="btn btn-blue" (click)="modalDelete.close()">Cancelar</button>
+    <button type="button" class="btn btn-blue ms-2" (click)="eliminarDentista()">Eliminar</button>
+  </div>
+</app-modal>

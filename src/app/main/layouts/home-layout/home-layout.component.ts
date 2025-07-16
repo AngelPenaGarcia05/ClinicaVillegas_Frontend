@@ -6,16 +6,15 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-home-layout',
   imports: [NavbarComponent, RouterOutlet],
   template: `
-    <app-navbar [navItems]="navItems"></app-navbar>
+    <nav app-navbar [navItems]="navItems"></nav>
     <router-outlet></router-outlet>
-  `,
-  styleUrl: './home-layout.component.css'
+  `
 })
 export class HomeLayoutComponent {
   navItems: NavItem[] = [
     {name: 'Inicio', link: 'home'},
-    {name: 'Tratamientos', link: 'tratamientos'},
-    {name: 'Blog', link: 'blog'},
+    {name: 'Tratamientos', link: 'home/treatments'},
+    {name: 'Blog', link: 'home/blog'},
     {name: 'Contactos', link: '#contactos'},
   ]
 }
