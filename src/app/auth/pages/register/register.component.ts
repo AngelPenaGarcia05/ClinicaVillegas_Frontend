@@ -106,7 +106,7 @@ export class RegisterComponent {
       Validators.required,
       Validators.minLength(12),
       Validators.maxLength(12),
-      Validators.pattern('^[0-9]*$')
+      Validators.pattern('^[a-zA-Z0-9]{12}$')
     ]);
   } else {
     documentoControl?.clearValidators(); // Por si aparece otro tipo no manejado

@@ -260,7 +260,7 @@ export class AppointmentComponent implements OnInit {
         this.reservaForm.get('paciente.apellidoMaterno')?.setValue('');
         numeroIdentidadControl?.setValidators([
           Validators.required,
-          Validators.pattern('^\\d{12}$')
+          Validators.pattern('^[a-zA-Z0-9]{12}$')
         ]);
         break;
     }
