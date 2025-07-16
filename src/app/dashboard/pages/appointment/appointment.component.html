@@ -141,6 +141,9 @@
                 @if (mostrarError('paciente.fechaNacimiento')) {
                 <small class="form-text text-danger">La fecha de nacimiento es obligatoria.</small>
                 }
+                @if (getControl('paciente.fechaNacimiento')?.hasError('futureDate')) {
+                <small class="form-text text-danger">La fecha de nacimiento no puede ser futura.</small>
+                }
 
                 <!-- Sexo -->
                 <div class="gender mt-3">

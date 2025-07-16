@@ -24,6 +24,7 @@ import { AsyncPipe } from '@angular/common';
 import { DatepickerComponent } from '../../components/datepicker/datepicker.component';
 import { fechaHoraNoPasadaValidator } from '../../../shared/validators/before-datetime.validator';
 import { soloLetrasValidator } from '../../../shared/validators/sololetras.validator';
+import { futureDateValidator } from '../../../shared/validators/futureDate.validator';
 
 @Component({
   selector: 'app-appointment',
@@ -110,7 +111,7 @@ export class AppointmentComponent implements OnInit {
         tipoDocumento: ['', Validators.required],
         numeroIdentidad: [{ value: '', disabled: true }, [Validators.required, Validators.pattern('^[0-9]*$')]],
         sexo: ['', Validators.required],
-        fechaNacimiento: ['', [Validators.required]]
+        fechaNacimiento: ['', [Validators.required, futureDateValidator]]
       })
     });
   }
