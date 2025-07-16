@@ -300,7 +300,7 @@ export class AppointmentComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error al guardar la reserva:', error);
-        this.toastService.error('Error al guardar la reserva: ' + error.mensaje);
+        this.toastService.error('Error al guardar la reserva: ' + error.error.mensaje);
       }
     });
 

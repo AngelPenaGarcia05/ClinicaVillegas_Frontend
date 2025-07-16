@@ -95,7 +95,7 @@
 
                 <!-- Botón DNI -->
                 @if (mostrarBotonDni) {
-                <button type="button" class="btn btn-primary mt-1" (click)="obtenerNombresApellidos()"
+                <button type="button" class="btn btn-primary btn-custom mt-1" (click)="obtenerNombresApellidos()"
                     [disabled]="getControl('paciente.numeroIdentidad')?.invalid || desactivarBotonDni">
                     Obtener Nombres y Apellidos
                 </button>
