@@ -19,11 +19,17 @@
         <label for="start-time">Seleccione hora de inicio</label>
         <input type="time" class="form-control" id="start-time" formControlName="horaInicio"
           [class]="{'is-invalid': agregarHorarioForm.get('horaInicio')?.invalid && agregarHorarioForm.get('horaInicio')?.touched}">
+          @if (agregarHorarioForm.get('horaInicio')?.hasError('outOfRange')) {
+          <small class="form-text text-danger">La hora debe estar dentro del rango de 9:00 a 22:00</small>
+          }
       </div>
       <div class="form-group">
         <label for="end-time">Seleccione hora de fin</label>
         <input type="time" class="form-control" id="end-time" formControlName="horaFin"
           [class]="{'is-invalid': agregarHorarioForm.get('horaFin')?.invalid && agregarHorarioForm.get('horaFin')?.touched}">
+          @if (agregarHorarioForm.get('horaFin')?.hasError('outOfRange')) {
+          <small class="form-text text-danger">La hora debe estar dentro del rango de 9:00 a 22:00</small>
+          }
       </div>
       <button class="btn"[disabled]="agregarHorarioForm.invalid" type="submit">Agregar horario</button>
     </div>
