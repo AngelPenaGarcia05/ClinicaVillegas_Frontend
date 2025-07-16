@@ -46,7 +46,12 @@ export class GestionDentistasComponent {
     nombre: new FormControl('')
   });
 
+  formEliminarDentista = new FormGroup({
+    motivoCese: new FormControl('', Validators.required)
+  });
+
   ngOnInit(): void {
+    
     this.loadDentistas();
     this.loadUsuarios();
   }
@@ -98,9 +103,10 @@ export class GestionDentistasComponent {
   openModalToEdit(dentista: Dentista) {
     this.accionFormlario = 'Editar dentista';
     this.dentistaTracked = dentista;
+    console.log(this.dentistaTracked);
     this.dentistaForm.get('nColegiatura')?.disable();
     this.dentistaForm.patchValue({
-      nColegiatura: dentista.nColegiatura,
+      nColegiatura: dentista.ncolegiatura,
       especialidad: dentista.especializacion,
       usuarioId: dentista.usuarioId.toString()
     });
@@ -151,7 +157,7 @@ export class GestionDentistasComponent {
   }
 
   eliminarDentista() {
-    this.dentistasService.eliminarDentista(this.dentistaTracked.id).subscribe({
+    this.dentistasService.eliminarDentista(this.dentistaTracked.id, this.formEliminarDentista.get('motivoCese')?.value ?? '').subscribe({
       next: (res) => {
         this.toastService.success(res.mensaje);
         this.loadDentistas();

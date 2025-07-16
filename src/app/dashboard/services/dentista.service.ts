@@ -83,7 +83,7 @@ export class DentistaService {
    * @param id El ID del dentista a eliminar.
    * @returns Un Observable que emite un objeto con un mensaje de éxito.
    */
-  eliminarDentista(id: number): Observable<{ mensaje: string }> {
-    return this.http.delete<{ mensaje: string }>(`${this.API_BASE_URL}/${id}`);
+  eliminarDentista(id: number, motivoCese: string): Observable<{ mensaje: string }> {
+    return this.http.patch<{ mensaje: string }>(`${this.API_BASE_URL}/${id}/eliminar`, {motivoCese});
   }
 }

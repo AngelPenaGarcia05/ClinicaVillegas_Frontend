@@ -53,9 +53,9 @@ export class HistorialComponent {
   trackedCita!: Cita;
 
   formCitas = new FormGroup({
-    fechaInicio: new FormControl('', Validators.required),
-    fechaFin: new FormControl('', [Validators.required]),
-    estado: new FormControl('', Validators.required),
+    fechaInicio: new FormControl(''),
+    fechaFin: new FormControl(''),
+    estado: new FormControl('Pendiente'),
   });
   formReprogramar: FormGroup;
   formCancelacion: FormGroup;
@@ -76,7 +76,7 @@ export class HistorialComponent {
   }
 
   loadCitas(): void {
-    this.citaService.buscarCitas({ usuarioId: this.userId }, false, this.currentPage, this.pageSize).subscribe({
+    this.citaService.buscarCitas({ usuarioId: this.userId, estado: 'Pendiente' }, false, this.currentPage, this.pageSize).subscribe({
       next: (response) => {
         const responseFormat = response as Pageable<Cita>;
         this.citas = responseFormat.content;

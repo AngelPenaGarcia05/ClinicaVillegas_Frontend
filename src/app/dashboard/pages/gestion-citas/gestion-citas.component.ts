@@ -61,7 +61,7 @@ export class GestionCitasComponent {
   formCitas = new FormGroup({
     fechaInicio: new FormControl(''),
     fechaFin: new FormControl(''),
-    estado: new FormControl(''),
+    estado: new FormControl('Pendiente'),
   });
   formReprogramar: FormGroup;
   formCancelacion: FormGroup;
@@ -82,7 +82,7 @@ export class GestionCitasComponent {
   }
 
   loadCitas(): void {
-    this.citaService.buscarCitas({ dentistaId: this.dentistaId }, false, this.currentPage, this.pageSize).subscribe({
+    this.citaService.buscarCitas({ dentistaId: this.dentistaId, estado: 'Pendiente' }, false, this.currentPage, this.pageSize).subscribe({
       next: (response) => {
         const responseFormat = response as Pageable<Cita>;
         this.citas = responseFormat.content;

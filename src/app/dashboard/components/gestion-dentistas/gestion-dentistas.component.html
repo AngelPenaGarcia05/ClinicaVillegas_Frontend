@@ -34,7 +34,7 @@
               <td>{{ dentista.id }}</td>
               <td>{{ dentista.nombres }}</td>
               <td>{{ dentista.especializacion }}</td>
-              <td>{{ dentista.nColegiatura }}</td>
+              <td>{{ dentista.ncolegiatura }}</td>
               <td>{{ dentista.telefono }}</td>
               <td>{{ dentista.tipoDocumento.nombre }}</td>
               <td>{{ dentista.numeroIdentidad }}</td>
@@ -140,6 +140,10 @@
   <div modal-body>
     @if (dentistaTracked) {
       <p>¿Está seguro de descartar el perfil de dentista asignado al correo "{{ dentistaTracked.correo }}"?</p>
+      <form [formGroup]="formEliminarDentista">
+        <label for="motivoCese">Motivo de cese laboral</label>
+        <textarea id="motivoCese" class="form-control" formControlName="motivoCese"></textarea>
+      </form>
     }
   </div>
   <div modal-footer>

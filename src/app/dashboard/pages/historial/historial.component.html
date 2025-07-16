@@ -12,7 +12,8 @@
         [class]="{'is-invalid': formCitas.get('fechaFin')?.invalid && formCitas.get('fechaFin')?.touched}">
       <label for="estado">Estado</label>
       <select class="form-select" id="estado" name="estado" formControlName="estado">
-        <option value="Pendiente">Pendiente</option>
+        <option value=""></option>
+        <option value="Pendiente" selected>Pendiente</option>
         <option value="Atendida">Atendida</option>
         <option value="Cancelada">Cancelada</option>
       </select>

@@ -14,7 +14,7 @@ import { CitaService } from '../../services/cita.service';
 import { ToastrService } from 'ngx-toastr';
 import { TipoDocumentoService } from '../../services/tipo-documento.service';
 import { StepperComponent } from '../../components/stepper/stepper.component';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TipoTratamientoService } from '../../services/tipo-tratamiento.service';
 import { Usuario } from '../../../shared/interfaces/usuario';
 import { timeRangeValidator } from '../../../shared/validators/time-range.validator';
@@ -23,6 +23,7 @@ import { CalendarComponent } from '../../components/calendar/calendar.component'
 import { AsyncPipe } from '@angular/common';
 import { DatepickerComponent } from '../../components/datepicker/datepicker.component';
 import { fechaHoraNoPasadaValidator } from '../../../shared/validators/before-datetime.validator';
+import { soloLetrasValidator } from '../../../shared/validators/sololetras.validator';
 
 @Component({
   selector: 'app-appointment',
@@ -103,9 +104,9 @@ export class AppointmentComponent implements OnInit {
         hora: [{ value: '', disabled: true }, Validators.required]
       }, { validators: fechaHoraNoPasadaValidator() }),
       paciente: this.fb.group({
-        nombres: ['', Validators.required],
-        apellidoPaterno: ['', Validators.required],
-        apellidoMaterno: ['', Validators.required],
+        nombres: ['', [Validators.required, soloLetrasValidator]],
+        apellidoPaterno: ['', [Validators.required, soloLetrasValidator]],
+        apellidoMaterno: ['', [Validators.required, soloLetrasValidator]],
         tipoDocumento: ['', Validators.required],
         numeroIdentidad: [{ value: '', disabled: true }, [Validators.required, Validators.pattern('^[0-9]*$')]],
         sexo: ['', Validators.required],
@@ -266,6 +267,11 @@ export class AppointmentComponent implements OnInit {
 
     numeroIdentidadControl?.updateValueAndValidity();
     numeroIdentidadControl?.enable();
+    ['nombres', 'apellidoPaterno', 'apellidoMaterno'].forEach(campo => {
+      const control = this.reservaForm.get(`paciente.${campo}`);
+      control?.markAsTouched(); // Muy importante para que Angular muestre errores
+      control?.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+    });
   }
 
   guardarReserva() {
@@ -294,7 +300,7 @@ export class AppointmentComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error al guardar la reserva:', error);
-        this.toastService.error('Error al guardar la reserva: ' + error.message);
+        this.toastService.error('Error al guardar la reserva: ' + error.mensaje);
       }
     });
 
@@ -302,5 +308,14 @@ export class AppointmentComponent implements OnInit {
   getError(controlPath: string, errorCode: string): boolean | undefined {
     const control = this.reservaForm.get(controlPath);
     return control?.hasError(errorCode) && control?.touched;
+  }
+  getControl(path: string): AbstractControl | null {
+    return this.reservaForm.get(path);
+  }
+
+  // Mostrar errores si el campo fue tocado o el formulario se envió
+  mostrarError(controlPath: string): boolean {
+    const control = this.getControl(controlPath);
+    return !!(control && control.invalid && (control.dirty || control.touched));
   }
 }

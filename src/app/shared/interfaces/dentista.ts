@@ -2,7 +2,7 @@ import { TipoDocumento } from "./tipo-documento";
 
 export interface Dentista {
     id: number;
-    nColegiatura: string;
+    ncolegiatura: string;
     estado: boolean;
     especializacion: string;
     usuarioId: number;

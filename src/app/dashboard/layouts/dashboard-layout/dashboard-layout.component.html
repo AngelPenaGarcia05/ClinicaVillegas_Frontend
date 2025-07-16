@@ -15,14 +15,14 @@
         <div>
             <a href="home" class="nav_logo">
                 <img src="media/logo-removebg-preview.png" height="30" alt="">
-                <span class="nav_logo-name">BBBootstrap</span>
+                <span class="nav_logo-name">Clinica Dental Villegas</span>
             </a>
             <div class="nav_list">
                 @for (menuItem of filteredMenuItems$ | async; track $index) {
                 <a [routerLink]="menuItem.link" class="nav_link" [class.active]="activeLink() === menuItem.label"
                     (click)="setActive(menuItem.label)">
                     <i [class]="menuItem.icon + ' nav_icon'"></i>
-                    <span class="nav_name">{{ menuItem.icon }}</span>
+                    <span class="nav_name">{{ menuItem.label }}</span>
                 </a>
                 }
             </div>

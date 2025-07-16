@@ -66,6 +66,7 @@
 
         <ng-template #step>
             <div formGroupName="paciente">
+                <!-- Tipo Documento -->
                 <label for="tipo-documento-label" class="form-label">Tipo de documento</label>
                 <select formControlName="tipoDocumento" class="form-select" id="tipo-documento-label"
                     (change)="agregarValidadores($event)">
@@ -74,63 +75,74 @@
                     }
                 </select>
 
+                <!-- Número de documento -->
                 <label for="dni-paciente-label" class="form-label mt-2">Número de documento:</label>
                 <input type="text" class="form-control" id="dni-paciente-label" formControlName="numeroIdentidad"
-                    [class.is-invalid]="getError('paciente.numeroIdentidad', 'required') || getError('paciente.numeroIdentidad', 'pattern')">
-                @if (getError('paciente.numeroIdentidad', 'required') || getError('paciente.numeroIdentidad',
-                'pattern')) {
+                    [class.is-invalid]="mostrarError('paciente.numeroIdentidad')">
+                @if (mostrarError('paciente.numeroIdentidad')) {
                 <small class="form-text text-danger">
-                    @if (getError('paciente.numeroIdentidad', 'required')) {
+                    @if (getControl('paciente.numeroIdentidad')?.hasError('required')) {
                     El número de documento es obligatorio.
-                    } @else if (reservaForm.get('paciente.numeroIdentidad')?.value?.length !== 8 && mostrarBotonDni) {
+                    } @else if (getControl('paciente.numeroIdentidad')?.hasError('pattern')) {
+                    @if (mostrarBotonDni) {
                     El número de DNI debe tener exactamente 8 dígitos numéricos.
-                    } @else if (reservaForm.get('paciente.numeroIdentidad')?.value?.length !== 12 && !mostrarBotonDni) {
-                    El número de documento debe tener exactamente 12 dígitos numéricos.
                     } @else {
-                    El número de documento no es válido.
+                    El número de documento debe tener exactamente 12 dígitos numéricos.
                     }
-                </small><br>
+                    }
+                </small>
                 }
 
+                <!-- Botón DNI -->
                 @if (mostrarBotonDni) {
-                <button type="button" class="btn btn-primary btn-custom mt-1" (click)="obtenerNombresApellidos()"
-                    [disabled]="reservaForm.get('tipoDocumento')?.invalid || desactivarBotonDni">
+                <button type="button" class="btn btn-primary mt-1" (click)="obtenerNombresApellidos()"
+                    [disabled]="getControl('paciente.numeroIdentidad')?.invalid || desactivarBotonDni">
                     Obtener Nombres y Apellidos
                 </button>
                 }
 
-                <label for="nombre-paciente-label" class="form-label">Nombres del paciente:</label>
+                <!-- Nombres -->
+                <label for="nombre-paciente-label" class="form-label">Nombres:</label>
                 <input type="text" class="form-control" id="nombre-paciente-label" formControlName="nombres"
-                    [readOnly]="mostrarBotonDni" [class.is-invalid]="getError('paciente.nombres', 'required')">
-
-                @if (getError('paciente.nombres', 'required')) {
+                    [readOnly]="mostrarBotonDni" [class.is-invalid]="mostrarError('paciente.nombres')">
+                @if (mostrarError('paciente.nombres')) {
                 <small class="form-text text-danger">El nombre del paciente es obligatorio.</small><br>
                 }
+                @if (getControl('paciente.nombres')?.hasError('soloLetras')) {
+                <small class="form-text text-danger">Solo letras</small><br>
+                }
 
-                <label for="apellidop-paciente-label" class="form-label mt-2">Apellido paterno:</label>
-                <input type="text" class="form-control" id="apellidop-paciente-label" formControlName="apellidoPaterno"
-                    [readOnly]="mostrarBotonDni" [class.is-invalid]="getError('paciente.apellidoPaterno', 'required')">
-
-                @if (getError('paciente.apellidoPaterno', 'required')) {
+                <!-- Apellido paterno -->
+                <label class="form-label mt-2">Apellido paterno:</label>
+                <input type="text" class="form-control" formControlName="apellidoPaterno" [readOnly]="mostrarBotonDni"
+                    [class.is-invalid]="mostrarError('paciente.apellidoPaterno')">
+                @if (mostrarError('paciente.apellidoPaterno')) {
                 <small class="form-text text-danger">El apellido paterno es obligatorio.</small><br>
                 }
+                @if (getControl('paciente.apellidoPaterno')?.hasError('soloLetras')) {
+                <small class="form-text text-danger">Solo letras</small><br>
+                }
 
-                <label for="apellidom-paciente-label" class="form-label mt-2">Apellido materno:</label>
-                <input type="text" class="form-control" id="apellidom-paciente-label" formControlName="apellidoMaterno"
-                    [readOnly]="mostrarBotonDni" [class.is-invalid]="getError('paciente.apellidoMaterno', 'required')">
-
-                @if (getError('paciente.apellidoMaterno', 'required')) {
+                <!-- Apellido materno -->
+                <label class="form-label mt-2">Apellido materno:</label>
+                <input type="text" class="form-control" formControlName="apellidoMaterno" [readOnly]="mostrarBotonDni"
+                    [class.is-invalid]="mostrarError('paciente.apellidoMaterno')">
+                @if (mostrarError('paciente.apellidoMaterno')) {
                 <small class="form-text text-danger">El apellido materno es obligatorio.</small><br>
                 }
-
-                <label for="fecha-nacimiento-label" class="form-label mt-2">Fecha de nacimiento:</label>
-                <input type="date" class="form-control" id="fecha-nacimiento-label" formControlName="fechaNacimiento"
-                    [class.is-invalid]="getError('paciente.fechaNacimiento', 'required')">
-
-                @if (getError('paciente.fechaNacimiento', 'required')) {
-                <small class="form-text text-danger">Ingrese una fecha válida.</small><br>
+                @if (getControl('paciente.apellidoMaterno')?.hasError('soloLetras')) {
+                <small class="form-text text-danger">Solo letras</small><br>
                 }
 
+                <!-- Fecha de nacimiento -->
+                <label class="form-label mt-2">Fecha de nacimiento:</label>
+                <input type="date" class="form-control" formControlName="fechaNacimiento"
+                    [class.is-invalid]="mostrarError('paciente.fechaNacimiento')">
+                @if (mostrarError('paciente.fechaNacimiento')) {
+                <small class="form-text text-danger">La fecha de nacimiento es obligatoria.</small>
+                }
+
+                <!-- Sexo -->
                 <div class="gender mt-3">
                     <input type="radio" formControlName="sexo" id="masculino" value="MASCULINO">
                     <label for="masculino">Masculino</label>
@@ -138,6 +150,7 @@
                     <label for="femenino">Femenino</label>
                 </div>
             </div>
+
 
             @if (!ocultarBotonReserva) {
             <button [disabled]="reservaForm.invalid" class="btn btn-primary bt-custom" (click)="guardarReserva()">

@@ -1,4 +1,4 @@
-import { Component, Signal, signal, inject, ViewChild } from '@angular/core';
+import { Component, Signal, signal, inject, ViewChild, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
@@ -10,7 +10,8 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { TipoDocumento } from '../../../shared/interfaces/tipo-documento';
 import { TipoDocumentoService } from '../../../dashboard/services/tipo-documento.service';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, isPlatformBrowser } from '@angular/common';
+import { soloLetrasValidator } from '../../../shared/validators/sololetras.validator';
 
 @Component({
   selector: 'app-register',
@@ -26,6 +27,7 @@ export class RegisterComponent {
   emailService = inject(EmailService);
   toastrService = inject(ToastrService);
   tipoDocumentoService = inject(TipoDocumentoService);
+  plataformId = inject(PLATFORM_ID);
   desactivarBotonDni = false;
 
   codigoGenerado: string = '';
@@ -53,9 +55,9 @@ export class RegisterComponent {
         Validators.maxLength(9),
         Validators.pattern('^[0-9]*$')
       ]],
-      nombres: ['', Validators.required],
-      apellidoPaterno: ['', Validators.required],
-      apellidoMaterno: ['', Validators.required],
+      nombres: ['', [Validators.required, soloLetrasValidator]],
+      apellidoPaterno: ['', [Validators.required, soloLetrasValidator]],
+      apellidoMaterno: ['', [Validators.required, soloLetrasValidator]],
       contrasena: ['', [
         Validators.required,
         Validators.minLength(3)
@@ -63,10 +65,12 @@ export class RegisterComponent {
       confirmPassword: ['', Validators.required],
       sexo: ['MASCULINO', Validators.required]
     }, { validator: this.passwordMatchValidator });
-    this.registerForm.get('tipodocumento')?.valueChanges.subscribe(() => {
-      this.onTipoDocumentoChange();
+    this.registerForm.get('tipodocumento')?.valueChanges.subscribe((valor) => {
+      this.onTipoDocumentoChange(valor);
     });
-    this.tiposDocumento = this.tipoDocumentoService.getTiposDocumento({}, true) as Observable<TipoDocumento[]>;
+    if(isPlatformBrowser(this.plataformId)){
+      this.tiposDocumento = this.tipoDocumentoService.getTiposDocumento({}, true) as Observable<TipoDocumento[]>;
+    }
   }
 
   //verifica que ambas contraseñas sean iguales
@@ -75,46 +79,42 @@ export class RegisterComponent {
     const confirmPassword = group.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
-  onTipoDocumentoChange() {
-    const tipoDocumento = this.registerForm.get('tipodocumento')?.value;
-    const documentoControl = this.registerForm.get('documento');
+  onTipoDocumentoChange(tipoDocumento: string) {
+  const documentoControl = this.registerForm.get('documento');
 
-    if (tipoDocumento === 'DNI') {
-      this.mostrarBotonDni = true;
-      documentoControl?.setValidators([
-        Validators.required,
-        Validators.minLength(8),
-        Validators.maxLength(8),
-        Validators.pattern('^[0-9]*$')
-      ]);
-    } else if (tipoDocumento === 'PASAPORTE') {
-      this.registerForm.get('nombres')?.setValue('');
-      this.registerForm.get('apellidoPaterno')?.setValue('');
-      this.registerForm.get('apellidoMaterno')?.setValue('');
-      documentoControl?.setValue('');
-      documentoControl?.setValidators([
-        Validators.required,
-        Validators.minLength(12),
-        Validators.maxLength(12),
-        Validators.pattern('^[0-9]*$')
-      ]);
-      this.mostrarBotonDni = false;
-    } if (tipoDocumento === 'CARNET EXT.') {
-      this.registerForm.get('nombres')?.setValue('');
-      this.registerForm.get('apellidoPaterno')?.setValue('');
-      this.registerForm.get('apellidoMaterno')?.setValue('');
-      documentoControl?.setValue('');
-      documentoControl?.setValidators([
-        Validators.required,
-        Validators.minLength(12),
-        Validators.maxLength(12),
-        Validators.pattern('^[0-9]*$')
-      ]);
-      this.mostrarBotonDni = false;
-    }
+  // Reset nombres y apellidos si no es DNI
+  const requiereAutollenado = tipoDocumento === 'DNI';
+  this.mostrarBotonDni = requiereAutollenado;
 
-    documentoControl?.updateValueAndValidity();
+  if (!requiereAutollenado) {
+    this.registerForm.get('nombres')?.setValue('');
+    this.registerForm.get('apellidoPaterno')?.setValue('');
+    this.registerForm.get('apellidoMaterno')?.setValue('');
+    documentoControl?.setValue('');
   }
+
+  // Configurar validadores dinámicos
+  if (tipoDocumento === 'DNI') {
+    documentoControl?.setValidators([
+      Validators.required,
+      Validators.minLength(8),
+      Validators.maxLength(8),
+      Validators.pattern('^[0-9]*$')
+    ]);
+  } else if (tipoDocumento === 'PASAPORTE' || tipoDocumento === 'CARNET EXT.') {
+    documentoControl?.setValidators([
+      Validators.required,
+      Validators.minLength(12),
+      Validators.maxLength(12),
+      Validators.pattern('^[0-9]*$')
+    ]);
+  } else {
+    documentoControl?.clearValidators(); // Por si aparece otro tipo no manejado
+  }
+
+  documentoControl?.updateValueAndValidity();
+}
+
 
   //actualiza en estado de la variable
   switchPasswordVisibility() {

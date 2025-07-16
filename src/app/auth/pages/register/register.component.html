@@ -98,7 +98,10 @@
                     [class.is-invalid]="namesControl?.invalid && (namesControl?.touched || namesControl?.dirty)"
                     formControlName="nombres" placeholder="Ingresa tus nombres" [readonly]="mostrarBotonDni">
                 @if (namesControl?.invalid && (namesControl?.touched || namesControl?.dirty)) {
-                <div class="invalid-feedback">Requerido</div>
+                <span class="invalid-feedback">Requerido</span>
+                }
+                @if (registerForm.get('nombres')?.errors?.['soloLetras']) {
+                <span class="invalid-feedback">Solo letras</span>
                 }
             </div>
 
@@ -111,6 +114,9 @@
                         [readonly]="mostrarBotonDni">
                     @if (lastName1Control?.invalid && (lastName1Control?.touched || lastName1Control?.dirty)) {
                     <div class="invalid-feedback">Requerido</div>
+                    @if (registerForm.get('apellidoPaterno')?.errors?.['soloLetras']) {
+                    <span class="invalid-feedback">Solo letras</span>
+                    }
                     }
                 </div>
                 <div class="col-md-6">
@@ -121,6 +127,9 @@
                         [readonly]="mostrarBotonDni">
                     @if (lastName2Control?.invalid && (lastName2Control?.touched || lastName2Control?.dirty)) {
                     <div class="invalid-feedback">Requerido</div>
+                    @if (registerForm.get('apellidoMaterno')?.errors?.['soloLetras']) {
+                    <span class="invalid-feedback">Solo letras</span>
+                    }
                     }
                 </div>
             </div>
